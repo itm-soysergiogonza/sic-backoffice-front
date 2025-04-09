@@ -1,0 +1,36 @@
+  <nb-card>
+      <nb-card-header>
+        <div class="header-content">
+          <h2>{{certificate.name}}</h2>
+          <nb-badge [status]="getStatusBadge()" [text]="certificate.status"></nb-badge>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <div class="details-grid">
+          <div class="detail-item">
+            <label>Categoría:</label>
+            <span>{{certificate.category}}</span>
+          </div>
+          <div class="detail-item">
+            <label>Propósito:</label>
+            <span>{{certificate.purpose}}</span>
+          </div>
+          <div class="detail-item">
+            <label>Formato de Salida:</label>
+            <span>{{certificate.outputFormat}}</span>
+          </div>
+          <div class="detail-item">
+            <label>Estado:</label>
+            <span>{{certificate.status}}</span>
+          </div>
+          <div class="detail-item">
+            <label>Fecha de Creación:</label>
+            <span>{{certificate.createdAt | date:'medium'}}</span>
+          </div>
+          <div class="detail-item">
+            <label>Última Actualización:</label>
+            <span>{{certificate.updatedAt | date:'medium'}}</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>

@@ -1,0 +1,19 @@
+<div class="header-container">
+  <article class="logo-container">
+      <button nbButton status="info" size="small" class="custom-icon" (click)="toggle()">
+    <nb-icon icon='menu-2-outline'></nb-icon>
+      </button>
+    <picture class="header-logo">
+      <img [ngSrc]="logoURL" alt="Logo" srcset="" priority width="83" height="35">
+    </picture>
+  </article>
+  <article class="header-profile-options">
+    <button nbButton status="info" size="small" class="custom-icon" (click)="toggleAppHub()">
+      <nb-icon icon='grid-outline'></nb-icon>
+    </button>
+    <nb-context-menu></nb-context-menu>
+  </article>
+</div>
+@if (showAppHub) {
+  <app-hub (closeHub)="onCloseAppHub()"></app-hub>
+}

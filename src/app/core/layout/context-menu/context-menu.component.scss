@@ -1,0 +1,80 @@
+@use '../../../../themes' as *;
+
+:host ::ng-deep {
+  --context-menu-min-width: none;
+  --context-menu-max-width: none;
+  --user-picture-box-border-width: 2px;
+  --user-picture-box-border-color: var(--color-white);
+
+  nb-user {
+    background: var(--background-basic-color-2);
+    border-radius: 32px;
+    padding: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--background-basic-color-3);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-container {
+      display: flex !important;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px 4px 4px;
+    }
+
+    .user-picture {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--color-primary-500);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-name, .user-title {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--text-basic-color);
+    }
+
+    .user-title {
+      font-size: 0.85rem;
+      color: var(--text-hint-color);
+    }
+  }
+
+  nb-context-menu {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md) !important;
+
+    .menu-items {
+      padding: 8px;
+      background: var(--background-basic-color-1);
+
+      .menu-item {
+        border-radius: 8px;
+        margin-bottom: 2px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: var(--background-basic-color-2);
+        }
+
+        nb-icon {
+          color: var(--text-hint-color);
+        }
+      }
+    }
+  }
+}
+
+:host-context(.nb-theme-default) {
+  --user-picture-box-border-color: var(--color-basic-800);
+}

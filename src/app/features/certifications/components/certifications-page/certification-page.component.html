@@ -1,0 +1,65 @@
+<div class="certifications-page">
+  <div class="page-header">
+    <div class="title-section">
+      <h1>Certificados</h1>
+      <button nbButton status="primary" size="medium" class="create-button" (click)="createCertificate()">
+        <nb-icon icon="plus-outline"></nb-icon>
+        Crear certificado
+      </button>
+    </div>
+    <div class="search-container">
+      <div class="search-box">
+        <nb-icon icon="search-outline"></nb-icon>
+        <input
+          type="search"
+          nbInput
+          fullWidth
+          placeholder="Buscar certificados..."
+          [value]="searchTerm"
+          (input)="onSearch($event)"
+        />
+        @if (searchTerm) {
+          <button class="clear-button" nbButton ghost (click)="clearSearch()">
+            <nb-icon icon="close-outline"></nb-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="content-container">
+    @if (filteredCertificates.length > 0) {
+      <div class="card-container">
+        @for (cert of filteredCertificates; track cert.id) {
+          <app-certification-card [certificate]="cert"></app-certification-card>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        @if (searchTerm) {
+          <div class="empty-icon">
+            <nb-icon icon="search-outline"></nb-icon>
+          </div>
+          <h3 class="empty-title">No se encontraron resultados</h3>
+          <p class="empty-description">
+            No hay certificados que coincidan con tu búsqueda "{{searchTerm}}".
+          </p>
+          <button nbButton status="primary" size="medium" (click)="clearSearch()">
+            Limpiar búsqueda
+          </button>
+        } @else {
+          <div class="empty-icon">
+            <nb-icon icon="file-text-outline"></nb-icon>
+          </div>
+          <h3 class="empty-title">No hay certificados creados</h3>
+          <p class="empty-description">
+            Aún no se ha creado ningún certificado en el sistema. Haz clic en el botón para crear el primero.
+          </p>
+          <button nbButton status="primary" size="medium" (click)="createCertificate()">
+            Crear nuevo certificado
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

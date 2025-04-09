@@ -1,0 +1,41 @@
+<nb-card>
+  <nb-card-header class="modal-header">
+    <h3>Crear Nuevo Certificado</h3>
+  </nb-card-header>
+  <nb-card-body>
+    <form [formGroup]="certificateForm">
+      <div class="form-field">
+        <label for="name">Nombre del Certificado</label>
+        <input nbInput fullWidth id="name" formControlName="name" placeholder="Ingrese el nombre">
+      </div>
+
+      <div class="form-field">
+        <label for="category">Categoría</label>
+        <nb-select fullWidth id="category" formControlName="category" placeholder="Seleccione la categoría">
+          <nb-option value="Académico">Académico</nb-option>
+          <nb-option value="Administrativo">Administrativo</nb-option>
+          <nb-option value="Estudiantil">Estudiantil</nb-option>
+          <nb-option value="Financiero">Financiero</nb-option>
+        </nb-select>
+      </div>
+
+      <div class="form-field">
+        <label for="purpose">Propósito</label>
+        <textarea nbInput fullWidth id="purpose" formControlName="purpose" placeholder="Describa el propósito"></textarea>
+      </div>
+
+      <div class="form-field">
+        <label for="outputFormat">Formato de Salida</label>
+        <nb-select fullWidth id="outputFormat" formControlName="outputFormat" placeholder="Seleccione el formato">
+          <nb-option value="PDF">PDF</nb-option>
+          <nb-option value="Digital">Digital</nb-option>
+          <nb-option value="Imprimible">Imprimible</nb-option>
+        </nb-select>
+      </div>
+    </form>
+  </nb-card-body>
+  <nb-card-footer class="modal-footer">
+    <button nbButton status="basic" (click)="cancel()">Cancelar</button>
+    <button nbButton status="primary" [disabled]="!certificateForm.valid" (click)="submit()">Crear</button>
+  </nb-card-footer>
+</nb-card>
