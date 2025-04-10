@@ -1,0 +1,57 @@
+<div class="editor-container">
+  <div class="editor-header">
+    <div class="header-left">
+      <nb-select
+        [(ngModel)]="selectedLanguage"
+        (selectedChange)="onLanguageChange($event)"
+        placeholder="Select language">
+        <nb-option *ngFor="let lang of languages" [value]="lang.value">{{ lang.label }}</nb-option>
+      </nb-select>
+    </div>
+    <div class="header-right">
+      <button nbButton ghost (click)="toggleParameters()">
+        <nb-icon [icon]="showParameters ? 'eye-off-outline' : 'eye-outline'"></nb-icon>
+        {{ showParameters ? 'Ocultar Parámetros' : 'Mostrar Parámetros' }}
+      </button>
+    </div>
+  </div>
+  <div class="editor-content">
+    <div class="editor-pane" [class.with-parameters]="showParameters">
+      <ngs-code-editor
+        [theme]="theme"
+        [codeModel]="model"
+        [options]="options"
+        (valueChanged)="onCodeChanged($event)">
+      </ngs-code-editor>
+    </div>
+    <div class="parameters-pane" *ngIf="showParameters">
+      <nb-accordion>
+        <nb-accordion-item *ngFor="let category of templateParameters | keyvalue">
+          <nb-accordion-item-header>
+            {{ category.key }}
+          </nb-accordion-item-header>
+          <nb-accordion-item-body>
+            <div class="parameter-list">
+              <nb-card *ngFor="let param of category.value" class="parameter-card" (click)="insertParameter(param.name)">
+                <nb-card-header>
+                  <code>{{ param.name }}</code>
+                </nb-card-header>
+                <nb-card-body>
+                  <p>{{ param.description }}</p>
+                  <small>Ejemplo: {{ param.example }}</small>
+                </nb-card-body>
+              </nb-card>
+            </div>
+          </nb-accordion-item-body>
+        </nb-accordion-item>
+      </nb-accordion>
+    </div>
+    <div class="preview-pane">
+      <div class="preview-header">
+        <h3>Vista Previa</h3>
+      </div>
+      <div class="preview-content" [innerHTML]="previewContent">
+      </div>
+    </div>
+  </div>
+</div>

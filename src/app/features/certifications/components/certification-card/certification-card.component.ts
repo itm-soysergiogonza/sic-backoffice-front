@@ -23,6 +23,6 @@ export class CertificationCardComponent {
   constructor(private router: Router) {}
 
   onViewDetails(): void {
-    this.router.navigate(['/certifications', this.certificate.id]);
+    this.router.navigate(['/certificados', this.certificate.id]);
   }
 }

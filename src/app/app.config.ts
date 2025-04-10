@@ -23,6 +23,7 @@ import {
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
+import { provideCodeEditor } from '@ngstack/code-editor';
 
 const NEBULAR_MODULES: (Provider | EnvironmentProviders)[] = [
   ...NbThemeModule.forRoot({ name: 'default' }).providers || [],
@@ -46,6 +47,11 @@ export const appConfig: ApplicationConfig = {
     ...NEBULAR_MODULES,
     importProvidersFrom(
       BrowserAnimationsModule
-    )
+    ),
+    provideCodeEditor({
+      baseUrl: 'assets/monaco',
+      typingsWorkerUrl: 'assets/workers/typings-worker.js'
+    })
+
   ],
 };

@@ -27,7 +27,17 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/monaco-editor/min",
+                "output": "assets/monaco"
+              },
+              {
+                "glob": "**/*.js",
+                "input": "node_modules/@ngstack/code-editor/workers",
+                "output": "assets/workers"
+                }
             ],
             "styles": ["src/styles.scss", "src/themes.scss"],
             "scripts": []
