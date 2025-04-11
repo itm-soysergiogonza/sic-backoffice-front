@@ -1,48 +1,29 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { environment } from '@environments/environment';
+import { env } from '@environments/index';
+import { Observable, map, of } from 'rxjs';
 import { Certificate } from '../models/certificate.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CertificateService {
-  private mockCertificates: Certificate[] = [
-    {
-      id: '1',
-      name: 'Certificado de Notas',
-      category: 'Académico',
-      purpose: 'Certificar las calificaciones del estudiante',
-      outputFormat: 'PDF',
-      status: 'Pendiente',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-  ];
+  constructor(private _http: HttpClient) {}
 
-  constructor(private http: HttpClient) {}
-
-  getCertificates(): Observable<Certificate[]> {
-    return of(this.mockCertificates);
-  }
-
-  createCertificate(certificate: Partial<Certificate>): Observable<Certificate> {
-    const newCertificate: Certificate = {
-      id: (this.mockCertificates.length + 1).toString(),
-      name: certificate.name!,
-      category: certificate.category!,
-      purpose: certificate.purpose!,
-      outputFormat: certificate.outputFormat!,
-      status: 'Pendiente',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    this.mockCertificates.push(newCertificate);
-    return of(newCertificate);
+  getCertificateList(): Observable<Certificate[]> {
+    return this._http.get<Certificate[]>(
+      `${environment.dataUrl}/certificates.json`,
+    );
   }
 
   getCertificateById(id: string): Observable<Certificate | undefined> {
-    return of(this.mockCertificates.find(cert => cert.id === id));
+    return this._http
+      .get<Certificate[]>(`${environment.dataUrl}/certificates.json`)
+      .pipe(
+        map((certificates) =>
+          certificates.find((certificate) => certificate.id === id),
+        ),
+      );
   }
 }

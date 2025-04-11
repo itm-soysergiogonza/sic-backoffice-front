@@ -5,7 +5,9 @@
         [(ngModel)]="selectedLanguage"
         (selectedChange)="onLanguageChange($event)"
         placeholder="Select language">
-        <nb-option *ngFor="let lang of languages" [value]="lang.value">{{ lang.label }}</nb-option>
+        @for (lang of languages ; track languages) {
+          <nb-option [value]="lang.value">{{ lang.label }}</nb-option>
+        }
       </nb-select>
     </div>
     <div class="header-right">
@@ -26,21 +28,24 @@
     </div>
     <div class="parameters-pane" *ngIf="showParameters">
       <nb-accordion>
-        <nb-accordion-item *ngFor="let category of templateParameters | keyvalue">
+        <nb-accordion-item>
           <nb-accordion-item-header>
-            {{ category.key }}
+            <span>Parámetros</span>
+            <nb-icon icon="chevron-down-outline"></nb-icon>
           </nb-accordion-item-header>
           <nb-accordion-item-body>
-            <div class="parameter-list">
-              <nb-card *ngFor="let param of category.value" class="parameter-card" (click)="insertParameter(param.name)">
-                <nb-card-header>
-                  <code>{{ param.name }}</code>
-                </nb-card-header>
-                <nb-card-body>
-                  <p>{{ param.description }}</p>
-                  <small>Ejemplo: {{ param.example }}</small>
-                </nb-card-body>
-              </nb-card>
+            <div class="parameters-grid">
+              @for (param of parameters; track param.name) {
+                <nb-card class="parameter-card" (click)="insertParameter(param.name)">
+                  <nb-card-header>
+                    <code>{{ param.name }}</code>
+                  </nb-card-header>
+                  <nb-card-body>
+                    <p>{{ param.description }}</p>
+                    <small>Ejemplo: {{ param.example }}</small>
+                  </nb-card-body>
+                </nb-card>
+              }
             </div>
           </nb-accordion-item-body>
         </nb-accordion-item>

@@ -1,16 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppItem } from '@core/models/app-item.interface';
 import { environment } from '@environments/environment';
+import { Parameters } from '@features/parameters/models/parameters.interface';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AppListService {
+export class ParametersService {
   constructor(private _http: HttpClient) {}
 
-  getApplications(): Observable<AppItem[]> {
-    return this._http.get<AppItem[]>(`${environment.dataUrl}/apps.json`);
+  getParameters(): Observable<Parameters[]> {
+    return this._http.get<Parameters[]>(
+      `${environment.dataUrl}/parameters.json`,
+    );
   }
 }

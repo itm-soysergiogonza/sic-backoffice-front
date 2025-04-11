@@ -1,19 +1,22 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Parameters } from '@features/parameters/models/parameters.interface';
+import { ParametersService } from '@features/parameters/services/parameters.service';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
+import {
+  NbAccordionModule,
+  NbButtonModule,
+  NbCardModule,
+  NbIconModule,
+  NbLayoutModule,
+  NbOptionModule,
+  NbSelectModule,
+} from '@nebular/theme';
 import { CodeModel } from '@ngstack/code-editor';
 import { CodeEditorModule } from '@ngstack/code-editor';
-import { FormsModule } from '@angular/forms';
-import { 
-  NbSelectModule, 
-  NbLayoutModule, 
-  NbOptionModule, 
-  NbCardModule, 
-  NbAccordionModule, 
-  NbIconModule,
-  NbButtonModule 
-} from '@nebular/theme';
-import { NbEvaIconsModule } from '@nebular/eva-icons';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 
 type LanguageType = 'html' | 'css';
 
@@ -43,10 +46,10 @@ interface TemplateParameter {
     NbAccordionModule,
     NbIconModule,
     NbButtonModule,
-    NbEvaIconsModule
+    NbEvaIconsModule,
   ],
   templateUrl: './editor.component.html',
-  styleUrl: './editor.component.scss'
+  styleUrl: './editor.component.scss',
 })
 export class EditorComponent implements OnInit {
   theme = 'vs-dark';
@@ -54,106 +57,11 @@ export class EditorComponent implements OnInit {
   htmlContent = '';
   cssContent = '';
   previewContent!: SafeHtml;
-  showParameters = true;
-
-  templateParameters: Record<string, TemplateParameter[]> = {
-    'Datos del Estudiante': [
-      { 
-        name: '{{student.name}}',
-        description: 'Nombre completo del estudiante',
-        example: 'ALVAREZ ACEVEDO JUAN ESTEBAN',
-        category: 'Estudiante'
-      },
-      {
-        name: '{{student.id}}',
-        description: 'Número de identificación',
-        example: 'CC 1216716946',
-        category: 'Estudiante'
-      },
-      {
-        name: '{{student.city}}',
-        description: 'Ciudad de origen',
-        example: 'Medellín (Antioquia)',
-        category: 'Estudiante'
-      },
-      {
-        name: '{{student.code}}',
-        description: 'Código del estudiante',
-        example: '24130029',
-        category: 'Estudiante'
-      }
-    ],
-    'Datos del Programa': [
-      {
-        name: '{{program.name}}',
-        description: 'Nombre del programa',
-        example: 'Tecnología en Calidad',
-        category: 'Programa'
-      },
-      {
-        name: '{{program.snies}}',
-        description: 'Código SNIES',
-        example: '53800',
-        category: 'Programa'
-      },
-      {
-        name: '{{program.duration}}',
-        description: 'Duración del programa',
-        example: '6',
-        category: 'Programa'
-      },
-      {
-        name: '{{program.intensity}}',
-        description: 'Intensidad horaria semanal',
-        example: '27',
-        category: 'Programa'
-      }
-    ],
-    'Datos del Certificado': [
-      {
-        name: '{{certificate.date}}',
-        description: 'Fecha de expedición',
-        example: 'lunes, 18 de marzo de 2024',
-        category: 'Certificado'
-      },
-      {
-        name: '{{certificate.period}}',
-        description: 'Período académico',
-        example: '2015-1',
-        category: 'Certificado'
-      }
-    ],
-    'Datos Institucionales': [
-      {
-        name: '{{institution.name}}',
-        description: 'Nombre de la institución',
-        example: 'ITM - Institución Universitaria',
-        category: 'Institución'
-      },
-      {
-        name: '{{institution.logo}}',
-        description: 'URL del logo institucional',
-        example: '/assets/images/logo-itm.png',
-        category: 'Institución'
-      },
-      {
-        name: '{{institution.dane}}',
-        description: 'Código DANE',
-        example: '18.603.103.391',
-        category: 'Institución'
-      },
-      {
-        name: '{{institution.icfes}}',
-        description: 'Código ICFES',
-        example: '2302',
-        category: 'Institución'
-      }
-    ]
-  };
+  showParameters = false;
 
   languages: LanguageOption[] = [
     { value: 'html', label: 'HTML' },
-    { value: 'css', label: 'CSS' }
+    { value: 'css', label: 'CSS' },
   ];
 
   defaultContent: Record<LanguageType, string> = {
@@ -340,32 +248,46 @@ export class EditorComponent implements OnInit {
 
 .footer-logo {
   max-width: 150px;
-}`
+}`,
   };
 
   model: CodeModel = {
     language: 'html',
     uri: 'main.html',
-    value: this.defaultContent.html
+    value: this.defaultContent.html,
   };
 
   options = {
     contextmenu: true,
     minimap: {
-      enabled: true
+      enabled: true,
     },
     lineNumbers: 'on' as const,
     roundedSelection: false,
     scrollBeyondLastLine: false,
     readOnly: false,
-    automaticLayout: true
+    automaticLayout: true,
   };
 
-  constructor(private sanitizer: DomSanitizer) {
+  // parameters$!: Observable<Parameters[]>;
+  parameters: Parameters[] = [];
+
+  constructor(
+    private sanitizer: DomSanitizer,
+    private _parametersService: ParametersService,
+  ) {
     this.previewContent = this.sanitizer.bypassSecurityTrustHtml('');
   }
 
   ngOnInit() {
+    this._parametersService.getParameters().subscribe({
+      next: (data) => {
+        this.parameters = data;
+      },
+      error: (err) => {
+        console.error('Error loading parameters:', err);
+      },
+    });
     this.htmlContent = this.defaultContent.html;
     this.cssContent = this.defaultContent.css;
     this.updatePreview();
@@ -376,7 +298,7 @@ export class EditorComponent implements OnInit {
     this.model = {
       language: language,
       uri: `main.${language}`,
-      value: this.defaultContent[language]
+      value: this.defaultContent[language],
     };
   }
 
@@ -395,7 +317,6 @@ export class EditorComponent implements OnInit {
 
   insertParameter(paramName: string): void {
     if (this.selectedLanguage === 'html') {
-      // Implementar la inserción del parámetro en la posición del cursor
       console.log('Insertar parámetro:', paramName);
     }
   }

@@ -1,1 +1,34 @@
-<app-editor></app-editor>
+@if (!loading && !error) {
+  <div class="certificate-details">
+    @if (certificate) {
+      <div>
+        <div class="header">
+          <h2>{{ certificate.name }}</h2>
+          <button nbButton status="primary" (click)="onEdit()">
+            <nb-icon icon="edit-outline"></nb-icon>
+            Editar Certificado
+          </button>
+        </div>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="label">Categoría:</span>
+            <span class="value">{{ certificate.category }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Propósito:</span>
+            <span class="value">{{ certificate.purpose }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Formato:</span>
+            <span class="value">{{ certificate.outputFormat }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Estado:</span>
+            <span class="value">{{ certificate.status }}</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "{{student.name}}",
+    "description": "Nombre completo del estudiante",
+    "example": "ALVAREZ ACEVEDO JUAN ESTEBAN",
+    "category": "Estudiante"
+  },
+  {
+    "name": "{{student.id}}",
+    "description": "Número de identificación",
+    "example": "CC 1216716946",
+    "category": "Estudiante"
+  },
+  {
+    "name": "{{student.city}}",
+    "description": "Ciudad de origen",
+    "example": "Medellín (Antioquia)",
+    "category": "Estudiante"
+  },
+  {
+    "name": "{{student.code}}",
+    "description": "Código del estudiante",
+    "example": "24130029",
+    "category": "Estudiante"
+  },
+  {
+    "name": "{{student.code}}",
+    "description": "Código del estudiante",
+    "example": "24130029",
+    "category": "Estudiante"
+  }
+]

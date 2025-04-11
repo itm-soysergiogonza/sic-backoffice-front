@@ -11,7 +11,6 @@ import {
 import { Certificate } from '../../models/certificate.model';
 import { CertificateService } from '../../services/certificate.service';
 import { CertificationCardComponent } from '../certification-card/certification-card.component';
-import { CreateCertificateModalComponent } from '../create-certificate-modal/create-certificate-modal.component';
 
 @Component({
   selector: 'app-certification-page',
@@ -39,11 +38,11 @@ export class CertificationPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadCertificates();
+    this._loadCertificates();
   }
 
-  private loadCertificates(): void {
-    this._certificateService.getCertificates().subscribe((certificates) => {
+  private _loadCertificates(): void {
+    this._certificateService.getCertificateList().subscribe((certificates) => {
       this.certificates = certificates;
       this.filteredCertificates = certificates;
     });
@@ -73,13 +72,13 @@ export class CertificationPageComponent implements OnInit {
     this.filteredCertificates = this.certificates;
   }
 
-  createCertificate(): void {
+  /* createCertificate(): void {
     this._dialogService
       .open(CreateCertificateModalComponent)
       .onClose.subscribe((result) => {
         if (result) {
           this._certificateService
-            .createCertificate(result)
+            .getCertificates(result)
             .subscribe((newCertificate) => {
               this.certificates = [...this.certificates, newCertificate];
               this.filteredCertificates = [
@@ -89,5 +88,5 @@ export class CertificationPageComponent implements OnInit {
             });
         }
       });
-  }
+  }*/
 }

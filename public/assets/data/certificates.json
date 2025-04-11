@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "Certificado de Notas",
+    "category": "Académico",
+    "purpose": "Certificar las calificaciones del estudiante",
+    "outputFormat": "PDF",
+    "status": "Pendiente",
+    "createdAt": "2023-10-01T12:00:00Z",
+    "updatedAt": "2023-10-01T12:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Certificado de Estudio",
+    "category": "Académico",
+    "purpose": "Certificar la finalización de estudios",
+    "outputFormat": "PDF",
+    "status": "Aprobado",
+    "createdAt": "2023-10-02T12:00:00Z",
+    "updatedAt": "2023-10-02T12:00:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Certificado de Matrícula",
+    "category": "Académico",
+    "purpose": "Certificar la matrícula del estudiante",
+    "outputFormat": "PDF",
+    "status": "Rechazado",
+    "createdAt": "2023-10-03T12:00:00Z",
+    "updatedAt": "2023-10-03T12:00:00Z"
+  }
+]
