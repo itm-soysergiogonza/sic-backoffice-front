@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AppListService } from '@core/services/app-list.service';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbButtonModule, NbIconModule } from '@nebular/theme';
+import { Observable } from 'rxjs';
 
 interface AppItem {
   name: string;
@@ -25,29 +27,25 @@ interface AppItem {
   templateUrl: './app-hub.component.html',
   styleUrl: './app-hub.component.scss',
 })
-export class AppHubComponent {
+export class AppHubComponent implements OnInit {
   @Output() closeHub = new EventEmitter<void>();
 
-  apps: AppItem[] = [
-    {
-      name: 'SIC',
-      icon: 'file-text-outline',
-      logo: '',
-      url: '/sic',
-    },
-    {
-      name: 'SIA',
-      icon: 'book-open-outline',
-      logo: '',
-      url: '/sia',
-    },
-    {
-      name: 'SIB',
-      icon: 'award-outline',
-      logo: '',
-      url: '/sib',
-    },
-  ];
+  apps$!: Observable<AppItem[]>;
+  apps: AppItem[] = [];
+
+  constructor(private _appListService: AppListService) {}
+
+  ngOnInit() {
+    this.apps$ = this._appListService.getApplications();
+    this.apps$.subscribe({
+      next: (data) => {
+        this.apps = data;
+      },
+      error: (err) => {
+        console.error('Error loading apps:', err);
+      },
+    });
+  }
 
   onCloseHub() {
     this.closeHub.emit();

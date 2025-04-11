@@ -25,29 +25,24 @@ export class AuthService {
     this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
-  // Simula el login desde otro micro frontend
   public setUserFromMicroFrontend(userData: User): void {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(userData));
     this.currentUserSubject.next(userData);
   }
 
-  // Obtiene el usuario actual
   public getCurrentUser(): User | null {
     return this.currentUserSubject.value;
   }
 
-  // Verifica si el usuario está autenticado
   public isAuthenticated(): boolean {
     return !!this.getCurrentUser();
   }
 
-  // Simula el logout
   public logout(): void {
     localStorage.removeItem(this.STORAGE_KEY);
     this.currentUserSubject.next(null);
   }
 
-  // Para desarrollo: simula un login con datos falsos
   public loginWithFakeData(): void {
     const fakeUser: User = {
       id: '1',

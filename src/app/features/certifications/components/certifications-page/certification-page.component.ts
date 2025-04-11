@@ -1,12 +1,17 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NbIconModule, NbButtonModule, NbInputModule, NbDialogService } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
-import { CertificationCardComponent } from '../certification-card/certification-card.component';
-import { CreateCertificateModalComponent } from '../create-certificate-modal/create-certificate-modal.component';
+import {
+  NbButtonModule,
+  NbDialogService,
+  NbIconModule,
+  NbInputModule,
+} from '@nebular/theme';
 import { Certificate } from '../../models/certificate.model';
 import { CertificateService } from '../../services/certificate.service';
+import { CertificationCardComponent } from '../certification-card/certification-card.component';
+import { CreateCertificateModalComponent } from '../create-certificate-modal/create-certificate-modal.component';
 
 @Component({
   selector: 'app-certification-page',
@@ -21,16 +26,16 @@ import { CertificateService } from '../../services/certificate.service';
     CertificationCardComponent,
   ],
   templateUrl: './certification-page.component.html',
-  styleUrl: './certification-page.component.scss'
+  styleUrl: './certification-page.component.scss',
 })
 export class CertificationPageComponent implements OnInit {
   certificates: Certificate[] = [];
   filteredCertificates: Certificate[] = [];
-  searchTerm: string = '';
+  searchTerm = '';
 
   constructor(
-    private certificateService: CertificateService,
-    private dialogService: NbDialogService
+    private _certificateService: CertificateService,
+    private _dialogService: NbDialogService,
   ) {}
 
   ngOnInit(): void {
@@ -38,16 +43,16 @@ export class CertificationPageComponent implements OnInit {
   }
 
   private loadCertificates(): void {
-    this.certificateService.getCertificates().subscribe(
-      certificates => {
-        this.certificates = certificates;
-        this.filteredCertificates = certificates;
-      }
-    );
+    this._certificateService.getCertificates().subscribe((certificates) => {
+      this.certificates = certificates;
+      this.filteredCertificates = certificates;
+    });
   }
 
   onSearch(event: Event): void {
-    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();
+    const searchTerm = (event.target as HTMLInputElement).value
+      .toLowerCase()
+      .trim();
     this.searchTerm = searchTerm;
 
     if (!searchTerm) {
@@ -55,10 +60,11 @@ export class CertificationPageComponent implements OnInit {
       return;
     }
 
-    this.filteredCertificates = this.certificates.filter(cert =>
-      cert.name.toLowerCase().includes(searchTerm) ||
-      cert.purpose.toLowerCase().includes(searchTerm) ||
-      cert.category.toLowerCase().includes(searchTerm)
+    this.filteredCertificates = this.certificates.filter(
+      (cert) =>
+        cert.name.toLowerCase().includes(searchTerm) ||
+        cert.purpose.toLowerCase().includes(searchTerm) ||
+        cert.category.toLowerCase().includes(searchTerm),
     );
   }
 
@@ -68,15 +74,19 @@ export class CertificationPageComponent implements OnInit {
   }
 
   createCertificate(): void {
-    this.dialogService.open(CreateCertificateModalComponent)
-      .onClose.subscribe(result => {
+    this._dialogService
+      .open(CreateCertificateModalComponent)
+      .onClose.subscribe((result) => {
         if (result) {
-          this.certificateService.createCertificate(result).subscribe(
-            newCertificate => {
+          this._certificateService
+            .createCertificate(result)
+            .subscribe((newCertificate) => {
               this.certificates = [...this.certificates, newCertificate];
-              this.filteredCertificates = [...this.filteredCertificates, newCertificate];
-            }
-          );
+              this.filteredCertificates = [
+                ...this.filteredCertificates,
+                newCertificate,
+              ];
+            });
         }
       });
   }

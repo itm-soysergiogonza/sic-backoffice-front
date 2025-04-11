@@ -1,17 +1,17 @@
 <div class="app-hub-overlay" (click)="onCloseHub()">
-    <div class="app-hub-container" (click)="$event.stopPropagation()">
-        <div class="app-grid">
-            @for (app of apps; track app.name) {
-                <button
-                        class="app-button"
-                        [routerLink]="app.isExternal ? null : app.url"
-                        (click)="app.isExternal ? openLink(app) : onCloseHub()">
-                    <div class="app-content">
-                        <nb-icon [icon]="app.icon"></nb-icon>
-                        <span>{{ app.name }}</span>
-                    </div>
-                </button>
-            }
+  <div class="app-hub-container" (click)="$event.stopPropagation()">
+    <div class="app-grid">
+      @for (app of apps; track app.name) {
+        <button
+          class="app-button"
+          [routerLink]="app.isExternal ? null : app.url"
+          (click)="app.isExternal ? openLink(app) : onCloseHub()">
+          <div class="app-content">
+            <nb-icon [icon]="app.icon"></nb-icon>
+            <span>{{ app.name }}</span>
+          </div>
+        </button>
+      }
         </div>
     </div>
 </div>

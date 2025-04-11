@@ -1,0 +1,20 @@
+[
+  {
+    "name": "SIC",
+    "icon": "file-text-outline",
+    "logo": "",
+    "url": "/sic"
+  },
+  {
+    "name": "SIA",
+    "icon": "book-open-outline",
+    "logo": "",
+    "url": "/sia"
+  },
+  {
+    "name": "SIB",
+    "icon": "award-outline",
+    "logo": "",
+    "url": "/sib"
+  }
+]
