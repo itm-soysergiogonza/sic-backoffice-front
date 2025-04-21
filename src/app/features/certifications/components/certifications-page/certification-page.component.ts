@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import {
   NbButtonModule,
-  NbDialogService,
   NbIconModule,
   NbInputModule,
+  NbSearchModule,
+  NbSearchService,
 } from '@nebular/theme';
+import { Subject, takeUntil } from 'rxjs';
 import { Certificate } from '../../models/certificate.model';
 import { CertificateService } from '../../services/certificate.service';
 import { CertificationCardComponent } from '../certification-card/certification-card.component';
@@ -23,36 +25,61 @@ import { CertificationCardComponent } from '../certification-card/certification-
     NbButtonModule,
     NbInputModule,
     CertificationCardComponent,
+    NbSearchModule,
   ],
   templateUrl: './certification-page.component.html',
   styleUrl: './certification-page.component.scss',
 })
-export class CertificationPageComponent implements OnInit {
+export class CertificationPageComponent implements OnInit, OnDestroy {
   certificates: Certificate[] = [];
-  filteredCertificates: Certificate[] = [];
   searchTerm = '';
+  filteredCertificates: Certificate[] = [];
+  private _destroy$: Subject<void> = new Subject<void>();
 
   constructor(
     private _certificateService: CertificateService,
-    private _dialogService: NbDialogService,
+    private _searchService: NbSearchService,
   ) {}
 
   ngOnInit(): void {
     this._loadCertificates();
+    this._setupSearch();
+  }
+
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   private _loadCertificates(): void {
-    this._certificateService.getCertificateList().subscribe((certificates) => {
-      this.certificates = certificates;
-      this.filteredCertificates = certificates;
-    });
+    this._certificateService
+      .getCertificateList()
+      .subscribe((certificates: Certificate[]) => {
+        this.certificates = certificates;
+        this.filteredCertificates = certificates;
+      });
   }
 
-  onSearch(event: Event): void {
-    const searchTerm = (event.target as HTMLInputElement).value
-      .toLowerCase()
-      .trim();
-    this.searchTerm = searchTerm;
+  private _setupSearch(): void {
+    this._searchService
+      .onSearchInput()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(({ term }) => {
+        this.searchTerm = term;
+        this._filterCertificates(term);
+      });
+
+    this._searchService
+      .onSearchSubmit()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(({ term }) => {
+        this.searchTerm = term;
+        this._filterCertificates(term);
+      });
+  }
+
+  private _filterCertificates(term: string): void {
+    const searchTerm = term.toLowerCase().trim();
 
     if (!searchTerm) {
       this.filteredCertificates = this.certificates;
@@ -60,10 +87,10 @@ export class CertificationPageComponent implements OnInit {
     }
 
     this.filteredCertificates = this.certificates.filter(
-      (cert) =>
-        cert.name.toLowerCase().includes(searchTerm) ||
-        cert.purpose.toLowerCase().includes(searchTerm) ||
-        cert.category.toLowerCase().includes(searchTerm),
+      (certificate) =>
+        certificate.name.toLowerCase().includes(searchTerm) ||
+        certificate.purpose.toLowerCase().includes(searchTerm) ||
+        certificate.category.toLowerCase().includes(searchTerm),
     );
   }
 
@@ -71,22 +98,4 @@ export class CertificationPageComponent implements OnInit {
     this.searchTerm = '';
     this.filteredCertificates = this.certificates;
   }
-
-  /* createCertificate(): void {
-    this._dialogService
-      .open(CreateCertificateModalComponent)
-      .onClose.subscribe((result) => {
-        if (result) {
-          this._certificateService
-            .getCertificates(result)
-            .subscribe((newCertificate) => {
-              this.certificates = [...this.certificates, newCertificate];
-              this.filteredCertificates = [
-                ...this.filteredCertificates,
-                newCertificate,
-              ];
-            });
-        }
-      });
-  }*/
 }

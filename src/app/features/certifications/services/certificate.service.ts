@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
-import { env } from '@environments/index';
-import { Observable, map, of } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Certificate } from '../models/certificate.model';
 
 @Injectable({

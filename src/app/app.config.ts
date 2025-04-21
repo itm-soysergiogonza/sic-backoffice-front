@@ -1,40 +1,44 @@
 import {
   type ApplicationConfig,
   EnvironmentProviders,
-  importProvidersFrom,
   Provider,
+  importProvidersFrom,
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
+import { provideHttpClient } from '@angular/common/http';
 import {
   BrowserAnimationsModule,
   provideAnimations,
 } from '@angular/platform-browser/animations';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
 import {
   NbBadgeModule,
+  NbCardHeaderComponent,
   NbCardModule,
+  NbDialogModule,
+  NbLayoutModule,
   NbMenuModule,
   NbSidebarModule,
   NbThemeModule,
-  NbLayoutModule,
-  NbDialogModule,
+  NbTreeGridModule,
 } from '@nebular/theme';
-import { NbEvaIconsModule } from '@nebular/eva-icons';
-import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
 import { provideCodeEditor } from '@ngstack/code-editor';
+import { routes } from './app.routes';
 
 const NEBULAR_MODULES: (Provider | EnvironmentProviders)[] = [
-  ...NbThemeModule.forRoot({ name: 'default' }).providers || [],
-  ...NbSidebarModule.forRoot().providers || [],
-  ...NbMenuModule.forRoot().providers || [],
-  ...NbDialogModule.forRoot().providers || [],
+  ...(NbThemeModule.forRoot({ name: 'default' }).providers || []),
+  ...(NbSidebarModule.forRoot().providers || []),
+  ...(NbMenuModule.forRoot().providers || []),
+  ...(NbDialogModule.forRoot().providers || []),
   importProvidersFrom(
     NbCardModule,
     NbBadgeModule,
     NbLayoutModule,
-    NbEvaIconsModule
+    NbEvaIconsModule,
+    NbTreeGridModule,
+    NbCardHeaderComponent,
   ),
 ];
 
@@ -45,13 +49,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(),
     ...NEBULAR_MODULES,
-    importProvidersFrom(
-      BrowserAnimationsModule
-    ),
+    importProvidersFrom(BrowserAnimationsModule),
     provideCodeEditor({
       baseUrl: 'assets/monaco',
-      typingsWorkerUrl: 'assets/workers/typings-worker.js'
-    })
-
+      typingsWorkerUrl: 'assets/workers/typings-worker.js',
+    }),
   ],
 };

@@ -66,14 +66,14 @@ export class EditorComponent implements OnInit {
 
   defaultContent: Record<LanguageType, string> = {
     html: `<!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <title>Certificado de Constancia</title>
 </head>
 <body>
   <div class="certificate">
     <header class="header">
-      <img src="{{institution.logo}}" alt="Logo ITM" class="logo">
+      <img ngSrc="{{institution.logo}}" alt="Logo ITM" class="logo" fill>
       <div class="institution-info">
         <p>Identificada ante el DANE con el número {{institution.dane}}</p>
         <p>Registrada ante el ICFES con el código {{institution.icfes}}</p>
@@ -118,7 +118,7 @@ export class EditorComponent implements OnInit {
         <p>{{certificate.date}}</p>
       </div>
       <div class="footer-logos">
-        <img src="/assets/images/footer-logo.png" alt="Logo Alcaldía de Medellín" class="footer-logo">
+        <img ngSrc="/assets/images/footer-logo.png" alt="Logo Alcaldía de Medellín" class="footer-logo" fill>
       </div>
     </footer>
   </div>
@@ -269,7 +269,6 @@ export class EditorComponent implements OnInit {
     automaticLayout: true,
   };
 
-  // parameters$!: Observable<Parameters[]>;
   parameters: Parameters[] = [];
 
   constructor(
@@ -281,11 +280,11 @@ export class EditorComponent implements OnInit {
 
   ngOnInit() {
     this._parametersService.getParameters().subscribe({
-      next: (data) => {
+      next: (data: Parameters[]) => {
         this.parameters = data;
       },
-      error: (err) => {
-        console.error('Error loading parameters:', err);
+      error: (error) => {
+        console.error('Error loading parameters:', error);
       },
     });
     this.htmlContent = this.defaultContent.html;

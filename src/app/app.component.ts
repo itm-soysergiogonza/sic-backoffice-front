@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthService } from '@core/services/auth.service';
 import {
   NbButtonModule,
   NbIconModule,
   NbLayoutModule,
   NbSidebarModule,
 } from '@nebular/theme';
-import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',

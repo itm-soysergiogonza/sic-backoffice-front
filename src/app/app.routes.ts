@@ -9,18 +9,29 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadChildren: () =>
-          import('@features/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES),
+          import('@features/dashboard/dashboard.routes').then(
+            (m): Routes => m.DASHBOARD_ROUTES,
+          ),
       },
       {
         path: 'certificados',
         loadChildren: () =>
-          import('@features/certifications/certifications.routes').then(m => m.CERTIFICATIONS_ROUTES),
+          import('@features/certifications/certifications.routes').then(
+            (m): Routes => m.CERTIFICATIONS_ROUTES,
+          ),
+      },
+      {
+        path: 'parametros',
+        loadChildren: () =>
+          import('@features/parameters/parameters.routes').then(
+            (m): Routes => m.PARAMETERS_ROUTES,
+          ),
       },
     ],
   },
   {
     path: '**',
     redirectTo: 'dashboard',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ];
