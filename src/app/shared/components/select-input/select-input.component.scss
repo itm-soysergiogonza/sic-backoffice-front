@@ -175,3 +175,130 @@
   background-color: var(--warning-background-color);
   opacity: 0.8;
 }
+
+.picklist-container {
+  display: flex;
+  gap: 1.5rem;
+  align-items: stretch;
+  min-height: 400px;
+}
+
+.list-container {
+  flex: 1;
+  
+  nb-card {
+    height: 100%;
+    margin: 0;
+
+    nb-card-header {
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        span {
+          font-weight: 600;
+          font-size: 1rem;
+        }
+
+        nb-icon {
+          font-size: 1.25rem;
+        }
+      }
+    }
+
+    nb-card-body {
+      padding: 0;
+      overflow: hidden;
+
+      nb-list {
+        height: 100%;
+        overflow-y: auto;
+
+        nb-list-item {
+          cursor: pointer;
+          transition: all 0.2s ease;
+          padding: 0.75rem 1rem;
+
+          &:hover {
+            background-color: var(--color-basic-100);
+          }
+
+          &.selected {
+            background-color: var(--color-primary-100);
+            border-left: 3px solid var(--color-primary-500);
+          }
+
+          .list-item-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+
+            .item-name {
+              flex: 1;
+              font-size: 0.875rem;
+            }
+
+            .price-badge {
+              font-size: 0.75rem;
+              font-weight: 600;
+              color: var(--color-success-700);
+              background-color: var(--color-success-100);
+              padding: 0.25rem 0.5rem;
+              border-radius: 1rem;
+              white-space: nowrap;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 0;
+
+  button {
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    nb-icon {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color);
+  border-radius: 3px;
+  
+  &:hover {
+    background: var(--scrollbar-thumb-hover-color);
+  }
+}
