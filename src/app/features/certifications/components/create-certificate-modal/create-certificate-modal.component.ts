@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NbButtonModule, NbInputModule, NbSelectModule, NbCardModule, NbDialogRef } from '@nebular/theme';
-import { Certificate, CertificateCategory, OutputFormat } from '../../models/certificate.model';
 
 @Component({
   selector: 'app-create-certificate-modal',

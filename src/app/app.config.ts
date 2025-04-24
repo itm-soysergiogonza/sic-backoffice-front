@@ -22,6 +22,7 @@ import {
   NbMenuModule,
   NbSidebarModule,
   NbThemeModule,
+  NbToastrModule,
   NbTreeGridModule,
 } from '@nebular/theme';
 import { provideCodeEditor } from '@ngstack/code-editor';
@@ -32,6 +33,7 @@ const NEBULAR_MODULES: (Provider | EnvironmentProviders)[] = [
   ...(NbSidebarModule.forRoot().providers || []),
   ...(NbMenuModule.forRoot().providers || []),
   ...(NbDialogModule.forRoot().providers || []),
+  ...(NbToastrModule.forRoot().providers || []),
   importProvidersFrom(
     NbCardModule,
     NbBadgeModule,

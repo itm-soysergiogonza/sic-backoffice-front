@@ -1,12 +1,19 @@
 <div class="certifications-page">
   <div class="page-header">
-   <div class="title-section">
+    <div class="title-section">
       <h1>Certificados</h1>
-   <div class="search-container">
-      <nb-search
-        type="rotate-layout"
-        placeholder="Buscar certificados..."
-      ></nb-search>
+      <button class="create-button" nbButton status="primary" size="medium" (click)="createCertificate()">
+        <nb-icon icon="plus-outline"></nb-icon>
+        <span>Crear Certificado</span>
+      </button>
+    </div>
+    <div class="header-actions">
+      <div class="search-container">
+        <nb-search
+          type="rotate-layout"
+          placeholder="Buscar certificados..."
+        ></nb-search>
+      </div>
     </div>
   </div>
 
@@ -42,5 +49,4 @@
       </div>
     }
   </div>
-</div>
 </div>

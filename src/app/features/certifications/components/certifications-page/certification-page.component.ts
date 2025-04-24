@@ -8,15 +8,15 @@ import {
   NbInputModule,
   NbSearchModule,
   NbSearchService,
+  NbCardModule,
 } from '@nebular/theme';
 import { Subject, takeUntil } from 'rxjs';
-import { Certificate } from '../../models/certificate.model';
-import { CertificateService } from '../../services/certificate.service';
 import { CertificationCardComponent } from '../certification-card/certification-card.component';
+import { CertificatesService } from '@shared/services/certificates.service';
+import { CertificateType } from '@shared/models/interfaces/certificate.interface';
 
 @Component({
   selector: 'app-certification-page',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -24,6 +24,7 @@ import { CertificationCardComponent } from '../certification-card/certification-
     NbEvaIconsModule,
     NbButtonModule,
     NbInputModule,
+    NbCardModule,
     CertificationCardComponent,
     NbSearchModule,
   ],
@@ -31,33 +32,38 @@ import { CertificationCardComponent } from '../certification-card/certification-
   styleUrl: './certification-page.component.scss',
 })
 export class CertificationPageComponent implements OnInit, OnDestroy {
-  certificates: Certificate[] = [];
+  certificateTypes: CertificateType[] = [];
   searchTerm = '';
-  filteredCertificates: Certificate[] = [];
+  filteredCertificates: CertificateType[] = [];
   private _destroy$: Subject<void> = new Subject<void>();
 
   constructor(
-    private _certificateService: CertificateService,
+    private _certificateService: CertificatesService,
     private _searchService: NbSearchService,
   ) {}
 
   ngOnInit(): void {
-    this._loadCertificates();
+    this._certificateService.getCertificateTypes();
     this._setupSearch();
+
+    this._certificateService.certificateType
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (types) => {
+          this.certificateTypes = types;
+          this.filteredCertificates = types;
+        },
+        error: (error) => {
+          console.error('Error al cargar tipos de certificados:', error);
+          this.certificateTypes = [];
+          this.filteredCertificates = [];
+        }
+      });
   }
 
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
-  }
-
-  private _loadCertificates(): void {
-    this._certificateService
-      .getCertificateList()
-      .subscribe((certificates: Certificate[]) => {
-        this.certificates = certificates;
-        this.filteredCertificates = certificates;
-      });
   }
 
   private _setupSearch(): void {
@@ -82,20 +88,22 @@ export class CertificationPageComponent implements OnInit, OnDestroy {
     const searchTerm = term.toLowerCase().trim();
 
     if (!searchTerm) {
-      this.filteredCertificates = this.certificates;
+      this.filteredCertificates = this.certificateTypes;
       return;
     }
 
-    this.filteredCertificates = this.certificates.filter(
+    this.filteredCertificates = this.certificateTypes.filter(
       (certificate) =>
-        certificate.name.toLowerCase().includes(searchTerm) ||
-        certificate.purpose.toLowerCase().includes(searchTerm) ||
-        certificate.category.toLowerCase().includes(searchTerm),
+        certificate.name.toLowerCase().includes(searchTerm)
     );
   }
 
   clearSearch(): void {
     this.searchTerm = '';
-    this.filteredCertificates = this.certificates;
+    this.filteredCertificates = this.certificateTypes;
+  }
+
+  createCertificate(): void {
+    console.log('Create new certificate');
   }
 }

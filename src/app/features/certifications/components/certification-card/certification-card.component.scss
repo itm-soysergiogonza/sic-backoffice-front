@@ -17,13 +17,11 @@
   }
 
   .card-header {
-    margin-bottom: 1rem;
 
     .title-section {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
       gap: 1rem;
+      align-items: center;
 
       h3 {
         margin: 0;

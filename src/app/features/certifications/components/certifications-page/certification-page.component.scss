@@ -1,5 +1,4 @@
 .card-container {
-  //grid 3 columns
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
@@ -11,15 +10,19 @@
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 
   .page-header {
-    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 
     .title-section {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
 
       h1 {
         font-size: 2rem;
@@ -30,7 +33,15 @@
 
       .create-button {
         nb-icon {
-          margin-right: 0.5rem;
+          margin-inline: .5rem;
+        }
+      }
+    }
+
+    .header-actions {
+      .search-container {
+        nb-search {
+          display: block;
         }
       }
     }

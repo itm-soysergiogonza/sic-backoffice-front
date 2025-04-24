@@ -3,6 +3,8 @@ export interface CertificateType {
   name: string;
   paid: boolean;
   price: number;
+
+  purpose?: string;
 }
 
 export type FieldType =

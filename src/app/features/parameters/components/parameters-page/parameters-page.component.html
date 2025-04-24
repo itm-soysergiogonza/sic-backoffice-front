@@ -9,9 +9,32 @@
         </button>
       </div>
     </nb-card-header>
-  </nb-card>
 
-  <app-select-input>
-    
-  </app-select-input>
+    <nb-card-body>
+      <div class="form-group">
+        <label class="label">Tipo de Certificado</label>
+        <nb-select
+          [(ngModel)]="selectedCertificateType"
+          (selectedChange)="onCertificateTypeChange($event)"
+          placeholder="Seleccione un tipo de certificado"
+          class="certificate-select"
+        >
+          <nb-option *ngFor="let type of certificateTypes" [value]="type.id">
+            {{ type.name }}
+          </nb-option>
+        </nb-select>
+      </div>
+
+      <div class="selected-certificate" *ngIf="selectedCertificateType">
+        <nb-icon icon="checkmark-circle-2-outline" status="success"></nb-icon>
+        <span>{{ getSelectedCertificateLabel() }}</span>
+      </div>
+
+      <!-- Parameter Picklist -->
+      <app-parameter-picklist 
+        *ngIf="selectedCertificate"
+        [selectedCertificateType]="selectedCertificate">
+      </app-parameter-picklist>
+    </nb-card-body>
+  </nb-card>
 </div>

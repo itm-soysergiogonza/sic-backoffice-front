@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NbButtonModule, NbIconModule, NbCardModule, NbTooltipModule } from '@nebular/theme';
-import { Certificate } from '../../models/certificate.model';
+import { CertificateType } from '@shared/models/interfaces/certificate.interface';
 
 @Component({
   selector: 'app-certification-card',
@@ -18,11 +18,11 @@ import { Certificate } from '../../models/certificate.model';
   styleUrls: ['./certification-card.component.scss']
 })
 export class CertificationCardComponent {
-  @Input() certificate!: Certificate;
+  @Input() certificate!: CertificateType;
 
-  constructor(private router: Router) {}
+  constructor(private _router: Router) {}
 
   onViewDetails(): void {
-    this.router.navigate(['/certificados', this.certificate.id]);
+    this._router.navigate([`/certificados/${this.certificate.id}/editar`]);
   }
 }

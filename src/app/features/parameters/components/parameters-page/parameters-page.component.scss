@@ -42,6 +42,42 @@
       }
     }
   }
+
+  nb-card-body {
+    padding: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    .label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-basic-color);
+    }
+
+    .certificate-select {
+      width: 100%;
+      max-width: 400px;
+    }
+  }
+
+  .selected-certificate {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: var(--color-success-100);
+    border-radius: 0.5rem;
+    color: var(--color-success-800);
+    font-weight: 500;
+
+    nb-icon {
+      font-size: 1.25rem;
+      color: var(--color-success-600);
+    }
+  }
 }
 
 
