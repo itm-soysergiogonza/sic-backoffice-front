@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  NbButtonModule,
   NbCardModule,
   NbIconModule,
   NbInputModule,
   NbTreeGridModule,
 } from '@nebular/theme';
-import { NbTableComponent } from '../../../../../shared/components/nb-table/nb-table';
+import { SelectInputComponent } from '@shared/components/select-input/select-input.component';
 
 @Component({
   selector: 'app-parameters-page',
@@ -15,11 +16,12 @@ import { NbTableComponent } from '../../../../../shared/components/nb-table/nb-t
   imports: [
     CommonModule,
     FormsModule,
+    NbButtonModule,
     NbCardModule,
     NbInputModule,
     NbTreeGridModule,
     NbIconModule,
-    NbTableComponent,
+    SelectInputComponent,
   ],
   templateUrl: './parameters-page.component.html',
   styleUrl: './parameters-page.component.scss',

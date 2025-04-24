@@ -1,0 +1,45 @@
+<div class="select-container">
+  <label class="select-label" *ngIf="value">
+    Tipo de Certificado Seleccionado
+  </label>
+  <nb-select
+    [(ngModel)]="value"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    (selectedChange)="onSelectionChange($event)"
+    fullWidth
+    status="primary"
+    size="medium"
+    class="select-input">
+    <nb-option *ngFor="let type of certificateTypes$ | async" [value]="{ label: type.name, value: type }">
+      <div class="option-content">
+        <span class="option-label">{{ type.name }}</span>
+        <span *ngIf="type.paid" class="option-price">
+          {{ type.price | currency:'USD':'symbol':'1.0-0' }}
+        </span>
+      </div>
+    </nb-option>
+  </nb-select>
+
+  <!-- Selected certificate info -->
+  <div *ngIf="value" class="selected-info">
+    <div class="selected-header">
+      <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+      <span>{{ value.label }}</span>
+    </div>
+    <div class="selected-details" *ngIf="value.value.paid">
+      <span class="price-tag">Precio: {{ value.value.price | currency:'USD':'symbol':'1.0-0' }}</span>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-state">
+    <nb-spinner size="small"></nb-spinner>
+    Cargando tipos de certificados...
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="(certificateTypes$ | async)?.length === 0 && !isLoading" class="debug-info">
+    No hay tipos de certificados disponibles
+  </div>
+</div>

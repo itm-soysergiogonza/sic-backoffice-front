@@ -1,0 +1,177 @@
+.select-container {
+  position: relative;
+  width: 100%;
+}
+
+.select-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-basic-color);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.select-input {
+  width: 100%;
+  margin-bottom: 1rem;
+  
+  ::ng-deep {
+    nb-select {
+      width: 100%;
+      
+      .select-button {
+        width: 100%;
+        min-height: 2.75rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        background-color: var(--select-background-color);
+        border: 1px solid var(--select-border-color);
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: var(--select-hover-border-color);
+          background-color: var(--select-hover-background-color);
+        }
+
+        &:focus {
+          border-color: var(--select-focus-border-color);
+          box-shadow: 0 0 0 2px var(--select-focus-shadow-color);
+        }
+      }
+      
+      .select-placeholder {
+        color: var(--text-hint-color);
+        font-size: 0.875rem;
+        opacity: 0.9;
+        font-style: italic;
+
+        &::before {
+          content: '▼ ';
+          font-size: 0.75rem;
+          margin-right: 0.25rem;
+          opacity: 0.7;
+        }
+      }
+    }
+    
+    nb-option {
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: var(--option-hover-background-color);
+      }
+
+      &.selected {
+        background-color: var(--option-selected-background-color);
+        color: var(--option-selected-text-color);
+      }
+
+      .option-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+
+        .option-label {
+          flex: 1;
+        }
+
+        .option-price {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--success-text-color);
+          background-color: var(--success-background-color);
+          padding: 0.25rem 0.5rem;
+          border-radius: 1rem;
+        }
+      }
+    }
+    
+    .options-list {
+      max-height: 300px;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: var(--scrollbar-track-color);
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb-color);
+        border-radius: 3px;
+        
+        &:hover {
+          background: var(--scrollbar-thumb-hover-color);
+        }
+      }
+    }
+  }
+}
+
+.selected-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-basic-100);
+  border: 1px solid var(--color-basic-300);
+
+  .selected-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-success-color);
+    font-weight: 600;
+
+    nb-icon {
+      font-size: 1.25rem;
+    }
+  }
+
+  .selected-details {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-basic-200);
+
+    .price-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      background-color: var(--color-success-100);
+      color: var(--text-success-color);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+  }
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-hint-color);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+
+  nb-spinner {
+    font-size: 1rem;
+  }
+}
+
+.debug-info {
+  color: var(--text-warning-color);
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--warning-background-color);
+  opacity: 0.8;
+}
