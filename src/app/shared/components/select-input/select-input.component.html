@@ -1,45 +1,63 @@
-<div class="select-container">
-  <label class="select-label" *ngIf="value">
-    Tipo de Certificado Seleccionado
-  </label>
-  <nb-select
-    [(ngModel)]="value"
-    [placeholder]="placeholder"
-    [disabled]="disabled"
-    (selectedChange)="onSelectionChange($event)"
-    fullWidth
-    status="primary"
-    size="medium"
-    class="select-input">
-    <nb-option *ngFor="let type of certificateTypes$ | async" [value]="{ label: type.name, value: type }">
-      <div class="option-content">
-        <span class="option-label">{{ type.name }}</span>
-        <span *ngIf="type.paid" class="option-price">
-          {{ type.price | currency:'USD':'symbol':'1.0-0' }}
-        </span>
-      </div>
-    </nb-option>
-  </nb-select>
-
-  <!-- Selected certificate info -->
-  <div *ngIf="value" class="selected-info">
-    <div class="selected-header">
-      <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
-      <span>{{ value.label }}</span>
-    </div>
-    <div class="selected-details" *ngIf="value.value.paid">
-      <span class="price-tag">Precio: {{ value.value.price | currency:'USD':'symbol':'1.0-0' }}</span>
-    </div>
+<div class="picklist-container">
+  <!-- Source List -->
+  <div class="list-container source-list">
+    <nb-card>
+      <nb-card-header>
+        <div class="header-content">
+          <span>Tipos Disponibles</span>
+          <nb-icon icon="list-outline"></nb-icon>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <nb-list>
+          <nb-list-item *ngFor="let type of certificateTypes$ | async" 
+                        (click)="selectSourceItem(type)"
+                        [class.selected]="isSelectedInSource(type)">
+            <div class="list-item-content">
+              <span class="item-name">{{ type.name }}</span>
+              <span *ngIf="type.paid" class="price-badge">
+                {{ type.price | currency:'USD':'symbol':'1.0-0' }}
+              </span>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
   </div>
 
-  <!-- Loading state -->
-  <div *ngIf="isLoading" class="loading-state">
-    <nb-spinner size="small"></nb-spinner>
-    Cargando tipos de certificados...
+  <!-- Controls -->
+  <div class="controls-container">
+    <button nbButton status="primary" (click)="moveToTarget()" [disabled]="!hasSelectedSource">
+      <nb-icon icon="arrow-forward-outline"></nb-icon>
+    </button>
+    <button nbButton status="primary" (click)="moveToSource()" [disabled]="!hasSelectedTarget">
+      <nb-icon icon="arrow-back-outline"></nb-icon>
+    </button>
   </div>
 
-  <!-- Empty state -->
-  <div *ngIf="(certificateTypes$ | async)?.length === 0 && !isLoading" class="debug-info">
-    No hay tipos de certificados disponibles
+  <!-- Target List -->
+  <div class="list-container target-list">
+    <nb-card>
+      <nb-card-header>
+        <div class="header-content">
+          <span>Tipos Seleccionados</span>
+          <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <nb-list>
+          <nb-list-item *ngFor="let type of selectedTypes" 
+                        (click)="selectTargetItem(type)"
+                        [class.selected]="isSelectedInTarget(type)">
+            <div class="list-item-content">
+              <span class="item-name">{{ type.name }}</span>
+              <span *ngIf="type.paid" class="price-badge">
+                {{ type.price | currency:'USD':'symbol':'1.0-0' }}
+              </span>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
   </div>
 </div>
