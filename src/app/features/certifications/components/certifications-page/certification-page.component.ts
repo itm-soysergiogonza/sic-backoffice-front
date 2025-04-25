@@ -9,11 +9,13 @@ import {
   NbSearchModule,
   NbSearchService,
   NbCardModule,
+  NbDialogService,
 } from '@nebular/theme';
 import { Subject, takeUntil } from 'rxjs';
 import { CertificationCardComponent } from '../certification-card/certification-card.component';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { CertificateType } from '@shared/models/interfaces/certificate.interface';
+import { CreateCertificateModalComponent } from '../create-certificate-modal/create-certificate-modal.component';
 
 @Component({
   selector: 'app-certification-page',
@@ -40,6 +42,7 @@ export class CertificationPageComponent implements OnInit, OnDestroy {
   constructor(
     private _certificateService: CertificatesService,
     private _searchService: NbSearchService,
+    private _dialogService: NbDialogService,
   ) {}
 
   ngOnInit(): void {
@@ -49,11 +52,11 @@ export class CertificationPageComponent implements OnInit, OnDestroy {
     this._certificateService.certificateType
       .pipe(takeUntil(this._destroy$))
       .subscribe({
-        next: (types) => {
+        next: (types: CertificateType[]) => {
           this.certificateTypes = types;
           this.filteredCertificates = types;
         },
-        error: (error) => {
+        error: (error: Error) => {
           console.error('Error al cargar tipos de certificados:', error);
           this.certificateTypes = [];
           this.filteredCertificates = [];
@@ -104,6 +107,20 @@ export class CertificationPageComponent implements OnInit, OnDestroy {
   }
 
   createCertificate(): void {
-    console.log('Create new certificate');
+    this._dialogService.open(CreateCertificateModalComponent)
+      .onClose.subscribe(result => {
+        if (result) {
+          this._certificateService.createCertificateType(result)
+            .pipe(takeUntil(this._destroy$))
+            .subscribe({
+              next: () => {
+                this._certificateService.getCertificateTypes();
+              },
+              error: (error: Error) => {
+                console.error('Error al crear el certificado:', error);
+              }
+            });
+        }
+      });
   }
 }

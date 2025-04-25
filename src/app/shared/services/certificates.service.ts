@@ -48,4 +48,8 @@ export class CertificatesService {
     const parameterIds = parameters.map(p => p.id);
     return this.http.delete(`${this._API_URL}/api/certificate/${certificateTypeId}/parameters`, { body: parameterIds });
   }
+
+  createCertificateType(certificate: Partial<CertificateType>): Observable<CertificateType> {
+    return this.http.post<CertificateType>(`${this._API_URL}/api/certificate/type`, certificate);
+  }
 }

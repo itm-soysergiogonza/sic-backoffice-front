@@ -9,6 +9,7 @@
   border: 1px solid var(--border-basic-color-3);
   border-left: 4px solid var(--color-basic-500);
   cursor: pointer;
+  overflow-wrap: anywhere;
 
   &:hover {
     transform: translateY(-4px);
@@ -23,32 +24,17 @@
       gap: 1rem;
       align-items: center;
 
+      nb-icon {
+        font-size: 2rem;
+        flex-shrink: 0;
+      }
+
       h3 {
         margin: 0;
         font-size: 1.25rem;
         font-weight: 600;
         color: var(--text-basic-color);
         line-height: 1.4;
-      }
-    }
-  }
-
-  .purpose {
-    color: var(--text-hint-color);
-    font-size: 0.875rem;
-    line-height: 1.6;
-    margin: 0;
-    flex-grow: 1;
-  }
-
-  .card-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: auto;
-
-    button {
-      nb-icon {
-        margin-right: 0.5rem;
       }
     }
   }

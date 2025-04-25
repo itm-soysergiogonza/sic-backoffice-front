@@ -22,24 +22,21 @@ export class CreateCertificateModalComponent {
   certificateForm: FormGroup;
 
   constructor(
-    private formBuilder: FormBuilder,
-    private dialogRef: NbDialogRef<CreateCertificateModalComponent>
+    private _formBuilder: FormBuilder,
+    private _dialogRef: NbDialogRef<CreateCertificateModalComponent>
   ) {
-    this.certificateForm = this.formBuilder.group({
+    this.certificateForm = this._formBuilder.group({
       name: ['', [Validators.required]],
-      category: ['', [Validators.required]],
-      purpose: ['', [Validators.required]],
-      outputFormat: ['', [Validators.required]]
     });
   }
 
   cancel() {
-    this.dialogRef.close();
+    this._dialogRef.close();
   }
 
   submit() {
     if (this.certificateForm.valid) {
-      this.dialogRef.close(this.certificateForm.value);
+      this._dialogRef.close(this.certificateForm.value);
     }
   }
 }
