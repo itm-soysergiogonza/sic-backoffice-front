@@ -27,24 +27,19 @@ export class CertificatesService {
       });
   }
 
-  // Obtener todos los parámetros disponibles
   getAllParameters(): Observable<CertificateField[]> {
     return this.http.get<CertificateField[]>(`${this._API_URL}/api/certificate/parameter`);
   }
 
-  // Obtener parámetros por tipo de certificado
   getCertificateParametersByType(certificateTypeId: number): Observable<CertificateField[]> {
     return this.http.get<CertificateField[]>(`${this._API_URL}/api/certificate/parameter?id=${certificateTypeId}`);
   }
 
-  // Asignar parámetros a un tipo de certificado
   assignParametersToCertificate(certificateTypeId: number, parameters: CertificateField[]): Observable<any> {
     return this.http.post(`${this._API_URL}/api/certificate/${certificateTypeId}/parameters`, parameters);
   }
 
-  // Desasignar parámetros de un tipo de certificado
   unassignParametersFromCertificate(certificateTypeId: number, parameters: CertificateField[]): Observable<any> {
-    // Asumiendo que el backend acepta un array de IDs de parámetros para desasignar
     const parameterIds = parameters.map(p => p.id);
     return this.http.delete(`${this._API_URL}/api/certificate/${certificateTypeId}/parameters`, { body: parameterIds });
   }

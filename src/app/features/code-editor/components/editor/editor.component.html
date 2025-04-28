@@ -26,30 +26,33 @@
         (valueChanged)="onCodeChanged($event)">
       </ngs-code-editor>
     </div>
-    <div class="parameters-pane" *ngIf="showParameters">
-      <nb-accordion>
-        <nb-accordion-item>
-          <nb-accordion-item-header>
-            <span>Parámetros</span>
-          </nb-accordion-item-header>
-          <nb-accordion-item-body>
-            <div class="parameters-grid">
-              @for (param of parameters; track param.name) {
-                <nb-card class="parameter-card" (click)="insertParameter(param.name)">
-                  <nb-card-header>
-                    <code>{{ param.name }}</code>
-                  </nb-card-header>
-                  <nb-card-body>
-                    <p>{{ param.description }}</p>
-                    <small>Ejemplo: {{ param.example }}</small>
-                  </nb-card-body>
-                </nb-card>
-              }
-            </div>
-          </nb-accordion-item-body>
-        </nb-accordion-item>
-      </nb-accordion>
-    </div>
+    @if (showParameters) {
+      <div class="parameters-pane">
+        <nb-accordion>
+          <nb-accordion-item>
+            <nb-accordion-item-header>
+              <span>Parámetros</span>
+            </nb-accordion-item-header>
+            <nb-accordion-item-body>
+              <div class="parameters-grid">
+                @for (param of parameters; track param.name) {
+                  <nb-card class="parameter-card" (click)="insertParameter(param.name)">
+                    <nb-card-header>
+                      <code>{{ param.name }}</code>
+                    </nb-card-header>
+                    <nb-card-body>
+                      <!--<p>{{ param.description }}</p>
+                      <small>Ejemplo: {{ param.example }}</small>-->
+                    </nb-card-body>
+                  </nb-card>
+                }
+              </div>
+            </nb-accordion-item-body>
+          </nb-accordion-item>
+        </nb-accordion>
+      </div>
+    }
+
     <div class="preview-pane">
       <div class="preview-header">
         <h3>Vista Previa</h3>

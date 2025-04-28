@@ -29,11 +29,12 @@ export interface CertificateField {
   required: boolean;
   placeholder?: string;
   options?: FieldOption[];
-  minLength?: number;
-  maxLength?: number;
-  minValue?: number;
-  maxValue?: number;
-  certificateType: CertificateType;
+  minLength?: string;
+  maxLength?: string;
+  minValue?: string;
+  maxValue?: string;
+  certificateType?: CertificateType;
+  certificateTypeId: CertificateType | number;
 }
 
 export interface CertificateTypeEvent {

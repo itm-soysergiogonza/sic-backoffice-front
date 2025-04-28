@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Parameters } from '@features/parameters/models/parameters.interface';
-import { ParametersService } from '@features/parameters/services/parameters.service';
+import { ParameterService } from '@shared/services/parameter.service';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import {
   NbAccordionModule,
@@ -16,7 +15,7 @@ import {
 } from '@nebular/theme';
 import { CodeModel } from '@ngstack/code-editor';
 import { CodeEditorModule } from '@ngstack/code-editor';
-import { Observable } from 'rxjs';
+import { Parameter } from '@shared/models/interfaces/parameter.interface';
 
 type LanguageType = 'html' | 'css';
 
@@ -94,7 +93,7 @@ export class EditorComponent implements OnInit {
       de <strong>{{student.city}}</strong> y carné <strong>{{student.code}}</strong>, se matriculó para
       estudiar en esta institución durante el período académico <strong>{{certificate.period}}</strong> al nivel <strong>6</strong> del programa
       <strong>{{program.name}}</strong>, incorporado en el sistema interno del
-      SNIES mediante Registro Nº <strong>{{program.snies}}</strong>, con una duración de <strong>{{program.duration}}</strong> semestres.</p>
+      SNIES mediante Registro N.º <strong>{{program.snies}}</strong>, con una duración de <strong>{{program.duration}}</strong> semestres.</p>
 
       <p class="intensity">Intensidad semanal de {{program.intensity}} horas.</p>
     </div>
@@ -269,24 +268,25 @@ export class EditorComponent implements OnInit {
     automaticLayout: true,
   };
 
-  parameters: Parameters[] = [];
+  parameters: Parameter[] = [];
 
   constructor(
     private sanitizer: DomSanitizer,
-    private _parametersService: ParametersService,
+    private _parametersService: ParameterService,
   ) {
     this.previewContent = this.sanitizer.bypassSecurityTrustHtml('');
   }
 
   ngOnInit() {
     this._parametersService.getParameters().subscribe({
-      next: (data: Parameters[]) => {
-        this.parameters = data;
+      next: (parameters: Parameter[]) => {
+        this.parameters = parameters;
       },
-      error: (error) => {
-        console.error('Error loading parameters:', error);
+      error: (error: any) => {
+        console.error('Error cargando los parámetros', error);
       },
     });
+
     this.htmlContent = this.defaultContent.html;
     this.cssContent = this.defaultContent.css;
     this.updatePreview();

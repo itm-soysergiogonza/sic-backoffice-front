@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import {AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, Input, forwardRef, OnInit, OnDestroy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CertificateTypeEvent } from '@shared/models/interfaces/certificate.interface';
@@ -6,19 +6,19 @@ import { NbSelectModule, NbSpinnerModule, NbIconModule } from '@nebular/theme';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { Observable, Subscription, finalize } from 'rxjs';
 import { CertificateType } from '@shared/models/interfaces/certificate.interface';
-import { ParameterPicklistComponent } from '@features/parameters/components/parameter-picklist/parameter-picklist.component';
 
 @Component({
   selector: 'app-select-input',
   standalone: true,
   imports: [
-    CommonModule, 
-    NbSelectModule, 
+    CommonModule,
+    NbSelectModule,
     NbSpinnerModule,
     NbIconModule,
-    ReactiveFormsModule, 
+    ReactiveFormsModule,
     FormsModule,
-    ParameterPicklistComponent
+    AsyncPipe,
+    CurrencyPipe
   ],
   templateUrl: './select-input.component.html',
   styleUrls: ['./select-input.component.scss'],
@@ -39,7 +39,7 @@ export class SelectInputComponent implements ControlValueAccessor, OnInit, OnDes
   certificateTypes$: Observable<CertificateType[]>;
   isLoading: boolean = true;
   private subscription: Subscription = new Subscription();
-  
+
   private onChange: (value: CertificateTypeEvent | null) => void = () => {};
   private onTouched: () => void = () => {};
 

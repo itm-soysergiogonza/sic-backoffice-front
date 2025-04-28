@@ -1,0 +1,107 @@
+<nb-card>
+  <nb-card-header>
+    <h3>Crear Nuevo Parámetro</h3>
+  </nb-card-header>
+  <nb-card-body>
+    <form [formGroup]="parameterForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Nombre *</label>
+          <input id="name" nbInput fullWidth formControlName="name" placeholder="Ingrese el nombre del parámetro">
+
+          @if (isInvalid('name')) {
+            <div class="error-message">
+              El nombre es requerido
+            </div>
+          }
+        </div>
+        <div class="form-group">
+          <label for="label">Etiqueta *</label>
+          <input id="label" nbInput fullWidth formControlName="label" placeholder="Ingrese la etiqueta del parámetro">
+          @if (isInvalid('label')) {
+            <div class="error-message">
+              La etiqueta es requerida
+            </div>
+          }
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="type">Tipo *</label>
+          <nb-select id="type" fullWidth formControlName="type">
+            @for (option of typeOptions; track $index) {
+              <nb-option [value]="option.value">{{ option.label }}</nb-option>
+            }
+          </nb-select>
+          @if (isInvalid('type')) {
+            <div class="error-message">
+              El tipo es requerido
+            </div>
+          }
+        </div>
+        <div class="form-group">
+          <label for="certificateTypeId">Tipo de Certificado *</label>
+          <nb-select id="certificateTypeId" fullWidth formControlName="certificateTypeId">
+            @for (type of certificateTypes; track type.id) {
+              <nb-option [value]="type.id">{{ type.name }}</nb-option>
+            }
+          </nb-select>
+          @if (isInvalid('certificateTypeId')) {
+            <div class="error-message">
+              El tipo de certificado es requerido
+            </div>
+          }
+        </div>
+      </div>
+      @if (parameterForm.get('type')?.value === 'SELECT_SINGLE' || parameterForm.get('type')?.value === 'SELECT_MULTIPLE') {
+        <div class="form-group">
+          <label for="options">Opciones (JSON) *</label>
+          <textarea id="options" nbInput fullWidth formControlName="options" placeholder='[{"value": "opcion1", "label": "Opción 1"}, {"value": "opcion2", "label": "Opción 2"}]'></textarea>
+          @if (isInvalid('options')) {
+            <div class="error-message">
+              Las opciones son requeridas para este tipo de campo
+            </div>
+          }
+        </div>
+      }
+      <div class="form-group">
+        <label for="placeholder">Placeholder</label>
+        <input id="placeholder" nbInput fullWidth formControlName="placeholder" placeholder="Ingrese el placeholder">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="minLength">Longitud Mínima</label>
+          <input id="minLength" nbInput fullWidth type="number" formControlName="minLength" placeholder="Ingrese la longitud mínima">
+        </div>
+        <div class="form-group">
+          <label for="maxLength">Longitud Máxima</label>
+          <input id="maxLength" nbInput fullWidth type="number" formControlName="maxLength" placeholder="Ingrese la longitud máxima">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="minValue">Valor Mínimo</label>
+          <input id="minValue" nbInput fullWidth type="number" formControlName="minValue" placeholder="Ingrese el valor mínimo">
+        </div>
+        <div class="form-group">
+          <label for="maxValue">Valor Máximo</label>
+          <input id="maxValue" nbInput fullWidth type="number" formControlName="maxValue" placeholder="Ingrese el valor máximo">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="required">
+          <span>Campo requerido</span>
+        </label>
+      </div>
+    </form>
+  </nb-card-body>
+  <nb-card-footer>
+    <button nbButton status="primary" (click)="saveParameter()" [disabled]="parameterForm.invalid || isSubmitting">
+      {{ isSubmitting ? 'Guardando...' : 'Guardar' }}
+    </button>
+    <button nbButton status="basic" (click)="cancel()">Cancelar</button>
+  </nb-card-footer>
+</nb-card>
+

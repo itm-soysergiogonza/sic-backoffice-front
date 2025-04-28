@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   NbButtonModule,
@@ -8,10 +8,14 @@ import {
   NbInputModule,
   NbTreeGridModule,
   NbSelectModule,
+  NbDialogService,
 } from '@nebular/theme';
 import { CertificatesService } from '@shared/services/certificates.service';
-import { CertificateType } from '@shared/models/interfaces/certificate.interface';
-import { ParameterPicklistComponent } from '../parameter-picklist/parameter-picklist.component';
+import {CertificateField, CertificateType } from '@shared/models/interfaces/certificate.interface';
+import { NbTableComponent } from '../nb-table/nb-table.component';
+import { CreateParameterModalComponent } from '../create-parameter-modal/create-parameter-modal.component';
+import { ParameterService } from '@shared/services/parameter.service';
+import {Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-parameters-page',
@@ -25,28 +29,30 @@ import { ParameterPicklistComponent } from '../parameter-picklist/parameter-pick
     NbTreeGridModule,
     NbIconModule,
     NbSelectModule,
-    ParameterPicklistComponent,
+    NbTableComponent
   ],
   templateUrl: './parameters-page.component.html',
   styleUrl: './parameters-page.component.scss',
 })
 export class ParametersPageComponent implements OnInit {
+  @ViewChild(NbTableComponent) nbTableComponent!: NbTableComponent;
   selectedCertificateType: string = '';
   certificateTypes: CertificateType[] = [];
   selectedCertificate: CertificateType | null = null;
+  private _destroy$ = new Subject<void>();
 
-  constructor(private certificatesService: CertificatesService) {}
+  constructor(private _certificatesService: CertificatesService,
+              private _parameterService: ParameterService,
+              private _dialogService: NbDialogService) {}
 
   ngOnInit(): void {
-    // Suscribirse a los tipos de certificados
-    this.certificatesService.certificateType.subscribe(
+    this._certificatesService.certificateType.subscribe(
       types => {
         this.certificateTypes = types;
       }
     );
 
-    // Cargar los tipos de certificados
-    this.certificatesService.getCertificateTypes();
+    this._certificatesService.getCertificateTypes();
   }
 
   getSelectedCertificateLabel(): string {
@@ -61,5 +67,16 @@ export class ParametersPageComponent implements OnInit {
     this.selectedCertificate = this.certificateTypes.find(
       type => type.id === Number(value)
     ) || null;
+  }
+
+  openParameterModal(): void {
+    this._dialogService.open(CreateParameterModalComponent)
+      .onClose
+      .subscribe((newParameter: CertificateField | null) => {
+        if (newParameter) {
+          this.nbTableComponent.parameters.push(newParameter);
+          this.nbTableComponent.updateDataSource(this.nbTableComponent.parameters);
+        }
+    })
   }
 }
