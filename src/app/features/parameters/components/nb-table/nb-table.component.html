@@ -46,8 +46,23 @@
     </ng-container>
 
     <ng-container [nbTreeGridColumnDef]="'certificateType'">
-      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('certificateType')" *nbTreeGridHeaderCellDef>
-        Tipo de Certificado
+      <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
+        <div class="certificate-type-header">
+          <span>Tipo de Certificado</span>
+          <nb-select
+            placeholder="Filtrar por tipo"
+            [(ngModel)]="selectedCertificateType"
+            (selectedChange)="onCertificateTypeChange($event)"
+            size="small"
+            class="certificate-type-select">
+            <nb-option [value]="''">Todos</nb-option>
+            @for (type of certificateTypes; track type.id) {
+              <nb-option [value]="type.id.toString()">
+                {{ type.name }}
+              </nb-option>
+            }
+          </nb-select>
+        </div>
       </th>
       <td nbTreeGridCell *nbTreeGridCellDef="let row">{{getCertificateTypeName(row)}}</td>
     </ng-container>

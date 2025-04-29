@@ -2,6 +2,7 @@
   display: flex;
   gap: 16px;
   width: fit-content;
+  margin-bottom: 1rem;
 
   .search-label {
     display: block;
@@ -10,6 +11,7 @@
 
 nb-card-body {
   display: block;
+  padding: 1rem;
 }
 
 @media (width < 400px) {
@@ -40,8 +42,56 @@ nb-card-body {
 
 .nb-tree-grid-header-cell, .nb-tree-grid-cell, .nb-tree-grid-footer-cell {
   border: 1px solid var(--color-primary-200);
+  padding: 0.75rem;
+  text-align: left;
 }
 
+.nb-tree-grid-header-cell {
+  background-color: var(--color-primary-50);
+  font-weight: 600;
+}
+
+.certificate-type-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  span {
+    white-space: nowrap;
+  }
+
+  .certificate-type-select {
+    width: 100%;
+    min-width: 150px;
+  }
+}
+
+:host ::ng-deep {
+  .nb-tree-grid-header-cell nb-select {
+    .select-button {
+      min-height: 2rem;
+      padding: 0.25rem 0.5rem;
+    }
+  }
+}
+
+// Action buttons
+button {
+  margin: 0 0.25rem;
+  
+  nb-icon {
+    font-size: 1.25rem;
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .certificate-type-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
 
 .parameters-container {
   padding: 20px;
@@ -84,6 +134,7 @@ nb-card-header {
 
 table {
   width: 100%;
+  border-collapse: collapse;
 }
 
 .mat-mdc-row:hover {

@@ -1,4 +1,5 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   NbCardModule,
   NbInputModule,
@@ -10,12 +11,14 @@ import {
   NbButtonModule,
   NbIconModule,
   NbDialogService,
+  NbSelectModule,
 } from '@nebular/theme';
-import { CertificateField } from '@shared/models/interfaces/certificate.interface';
+import { CertificateField, CertificateType } from '@shared/models/interfaces/certificate.interface';
 import { ParameterService } from '@shared/services/parameter.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY } from 'rxjs';
 import { ParameterModalComponent } from '../parameter-modal/parameter-modal.component';
+import { CertificatesService } from '@shared/services/certificates.service';
 
 interface TreeNode<T> {
   data: T;
@@ -28,7 +31,15 @@ interface TreeNode<T> {
   templateUrl: './nb-table.component.html',
   styleUrl: './nb-table.component.scss',
   standalone: true,
-  imports: [NbCardModule, NbInputModule, NbTreeGridModule, NbButtonModule, NbIconModule]
+  imports: [
+    NbCardModule,
+    NbInputModule,
+    NbTreeGridModule,
+    NbButtonModule,
+    NbIconModule,
+    NbSelectModule,
+    FormsModule
+  ]
 })
 export class NbTableComponent implements OnInit {
   customColumn = 'label';
@@ -37,6 +48,8 @@ export class NbTableComponent implements OnInit {
 
   dataSource: NbTreeGridDataSource<CertificateField>;
   parameters: CertificateField[] = [];
+  certificateTypes: CertificateType[] = [];
+  selectedCertificateType: string = '';
 
   private _destroyRef = inject(DestroyRef);
 
@@ -47,12 +60,32 @@ export class NbTableComponent implements OnInit {
     private _dataSourceBuilder: NbTreeGridDataSourceBuilder<CertificateField>,
     private _parametersService: ParameterService,
     private _dialogService: NbDialogService,
+    private _certificatesService: CertificatesService,
   ) {
     this.dataSource = this._dataSourceBuilder.create([]);
   }
 
   ngOnInit(): void {
+    this.loadCertificateTypes();
     this.loadParameters();
+  }
+
+  loadCertificateTypes(): void {
+    this._certificatesService.certificateType
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (types) => {
+          console.log('Tipos de certificados recibidos:', types);
+          if (Array.isArray(types)) {
+            this.certificateTypes = types;
+          }
+        },
+        error: (error) => {
+          console.error('Error al cargar los tipos de certificados:', error);
+        }
+      });
+
+    this._certificatesService.getCertificateTypes();
   }
 
   loadParameters() {
@@ -62,7 +95,7 @@ export class NbTableComponent implements OnInit {
         next: (parameters: CertificateField[]) => {
           if (Array.isArray(parameters)) {
             this.parameters = parameters;
-            this.updateDataSource(this.parameters);
+            this.filterParameters();
           } else {
             console.error('Received invalid parameters data:', parameters);
           }
@@ -71,6 +104,22 @@ export class NbTableComponent implements OnInit {
           console.error('Error loading parameters:', error);
         },
       })
+  }
+
+  filterParameters(): void {
+    let filteredParameters = [...this.parameters];
+    if (this.selectedCertificateType) {
+      filteredParameters = this.parameters.filter(
+        param => param.certificateTypeId === Number(this.selectedCertificateType)
+      );
+    }
+    this.updateDataSource(filteredParameters);
+  }
+
+  onCertificateTypeChange(value: string): void {
+    console.log('Tipo de certificado seleccionado:', value);
+    this.selectedCertificateType = value;
+    this.filterParameters();
   }
 
   updateDataSource(parameters: CertificateField[]): void {
@@ -121,8 +170,6 @@ export class NbTableComponent implements OnInit {
   }
 
   editParameter(parameter: CertificateField): void {
-    console.log('1. Botón editar clickeado. Datos del parámetro:', parameter);
-
     if (!parameter) {
       console.warn('No se recibió parámetro para editar');
       return;
@@ -133,8 +180,6 @@ export class NbTableComponent implements OnInit {
       return;
     }
 
-    console.log('2. Abriendo modal con datos:', parameter);
-
     const dialogRef = this._dialogService.open(ParameterModalComponent, {
       closeOnBackdropClick: false,
       closeOnEsc: false,
@@ -142,11 +187,9 @@ export class NbTableComponent implements OnInit {
       hasScroll: false,
     });
 
-    // Inicializar el modal después de que se haya creado
     setTimeout(() => {
       const modalComponent = dialogRef.componentRef?.instance;
       if (modalComponent) {
-        console.log('3. Inicializando modal');
         modalComponent.initialize(parameter, true);
       }
     });
@@ -160,9 +203,7 @@ export class NbTableComponent implements OnInit {
         })
       )
       .subscribe((result) => {
-        console.log('4. Modal cerrado con resultado:', result);
         if (result) {
-          console.log('5. Actualizando tabla con nuevos datos');
           this.loadParameters();
         }
       });
