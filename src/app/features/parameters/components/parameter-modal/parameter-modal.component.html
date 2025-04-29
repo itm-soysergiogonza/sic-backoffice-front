@@ -1,6 +1,13 @@
 <nb-card>
   <nb-card-header>
-    <h3>Crear Nuevo Parámetro</h3>
+    <h3>{{ modalTitle }}</h3>
+    @if (isEditMode && parameterToEdit) {
+      <div class="parameter-info">
+        <p>Editando parámetro: <strong>{{ parameterToEdit.name }}</strong></p>
+        <p>Tipo: <strong>{{ parameterToEdit.type }}</strong></p>
+        <p>Tipo de Certificado: <strong>{{ parameterToEdit.certificateType?.name }}</strong></p>
+      </div>
+    }
   </nb-card-header>
   <nb-card-body>
     <form [formGroup]="parameterForm">
@@ -8,7 +15,6 @@
         <div class="form-group">
           <label for="name">Nombre *</label>
           <input id="name" nbInput fullWidth formControlName="name" placeholder="Ingrese el nombre del parámetro">
-
           @if (isInvalid('name')) {
             <div class="error-message">
               El nombre es requerido
@@ -25,6 +31,7 @@
           }
         </div>
       </div>
+
       <div class="form-row">
         <div class="form-group">
           <label for="type">Tipo *</label>
@@ -40,12 +47,25 @@
           }
         </div>
         <div class="form-group">
-          <label for="certificateTypeId">Tipo de Certificado *</label>
-          <nb-select id="certificateTypeId" fullWidth formControlName="certificateTypeId">
-            @for (type of certificateTypes; track type.id) {
-              <nb-option [value]="type.id">{{ type.name }}</nb-option>
+          <label for="certificateTypeId" class="form-label">Tipo de Certificado *</label>
+          <div class="select-container">
+            <nb-select
+              id="certificateTypeId"
+              formControlName="certificateTypeId"
+              [placeholder]="isLoadingCertificateTypes ? 'Cargando...' : 'Seleccione un tipo de certificado'"
+              [status]="isInvalid('certificateTypeId') ? 'danger' : 'basic'"
+              fullWidth
+            >
+              @for (type of certificateTypes; track type.id) {
+                <nb-option [value]="type.id">{{ type.name }}</nb-option>
+              }
+            </nb-select>
+            @if (isLoadingCertificateTypes) {
+              <div class="loading-indicator">
+                <nb-icon icon="loader-outline" pack="eva"></nb-icon>
+              </div>
             }
-          </nb-select>
+          </div>
           @if (isInvalid('certificateTypeId')) {
             <div class="error-message">
               El tipo de certificado es requerido
@@ -53,6 +73,7 @@
           }
         </div>
       </div>
+
       @if (parameterForm.get('type')?.value === 'SELECT_SINGLE' || parameterForm.get('type')?.value === 'SELECT_MULTIPLE') {
         <div class="form-group">
           <label for="options">Opciones (JSON) *</label>
@@ -64,6 +85,7 @@
           }
         </div>
       }
+
       <div class="form-group">
         <label for="placeholder">Placeholder</label>
         <input id="placeholder" nbInput fullWidth formControlName="placeholder" placeholder="Ingrese el placeholder">
@@ -79,6 +101,7 @@
           <input id="maxLength" nbInput fullWidth type="number" formControlName="maxLength" placeholder="Ingrese la longitud máxima">
         </div>
       </div>
+
       <div class="form-row">
         <div class="form-group">
           <label for="minValue">Valor Mínimo</label>
@@ -89,6 +112,7 @@
           <input id="maxValue" nbInput fullWidth type="number" formControlName="maxValue" placeholder="Ingrese el valor máximo">
         </div>
       </div>
+
       <div class="form-group">
         <label class="checkbox-label">
           <input type="checkbox" formControlName="required">
@@ -98,10 +122,12 @@
     </form>
   </nb-card-body>
   <nb-card-footer>
-    <button nbButton status="primary" (click)="saveParameter()" [disabled]="parameterForm.invalid || isSubmitting">
-      {{ isSubmitting ? 'Guardando...' : 'Guardar' }}
-    </button>
-    <button nbButton status="basic" (click)="cancel()">Cancelar</button>
+    <div class="actions">
+      <button nbButton status="basic" (click)="cancel()">Cancelar</button>
+      <button nbButton status="primary" (click)="saveParameter()" [disabled]="isSubmitting">
+        {{ isEditMode ? 'Actualizar' : 'Crear' }}
+      </button>
+    </div>
   </nb-card-footer>
 </nb-card>
 

@@ -27,18 +27,49 @@ export class ParameterService {
   }
 
   createParameter(params: Partial<CertificateField>): Observable<CertificateField> {
-
     return this._http.post<CertificateField>(
       `${this._API_URL}/api/certificate/parameter`,
       params
     ).pipe(
-      tap(response => {
-        console.log('Respuesta del servidor:', response);
-        if (response && response.id) {
+      tap((parameter: CertificateField) => {
+        if (parameter && parameter.id) {
           this.getParameters();
         }
       }),
     );
   }
 
+  removeParameter(paramId: number): Observable<CertificateField> {
+    return this._http.delete<CertificateField>(
+      `${this._API_URL}/api/certificate/parameter/${paramId}`
+    ).pipe(
+      tap((parameter: CertificateField) => {
+        if (parameter && parameter.id) {
+          this.getParameters();
+        }
+      }),
+    );
+  }
+
+  updateParameter(paramId: number, params: Partial<CertificateField>): Observable<CertificateField> {
+    console.log(`Enviando petición PUT a ${this._API_URL}/api/certificate/parameter/${paramId}`);
+    console.log('Datos de la petición:', params);
+    
+    return this._http.put<CertificateField>(
+      `${this._API_URL}/api/certificate/parameter/${paramId}`,
+      params
+    ).pipe(
+      tap({
+        next: (parameter: CertificateField) => {
+          console.log('Respuesta del servidor (PUT):', parameter);
+          if (parameter && parameter.id) {
+            this.getParameters();
+          }
+        },
+        error: (error) => {
+          console.error('Error en la petición PUT:', error);
+        }
+      }),
+    );
+  }
 }

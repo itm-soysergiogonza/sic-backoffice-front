@@ -21,9 +21,7 @@
       <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('name')" *nbTreeGridHeaderCellDef>
         Nombre
       </th>
-      <td nbTreeGridCell *nbTreeGridCellDef="let row">
-        {{row.data[customColumn]}}
-      </td>
+      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.name || '-'}}</td>
     </ng-container>
 
     <ng-container [nbTreeGridColumnDef]="'type'">
@@ -44,7 +42,7 @@
       <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('placeholder')" *nbTreeGridHeaderCellDef>
        Placeholder
       </th>
-      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data[customColumn]}}</td>
+      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.placeholder || '-'}}</td>
     </ng-container>
 
     <ng-container [nbTreeGridColumnDef]="'certificateType'">

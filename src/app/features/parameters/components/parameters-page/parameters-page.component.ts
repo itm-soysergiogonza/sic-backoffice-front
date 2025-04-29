@@ -13,9 +13,9 @@ import {
 import { CertificatesService } from '@shared/services/certificates.service';
 import {CertificateField, CertificateType } from '@shared/models/interfaces/certificate.interface';
 import { NbTableComponent } from '../nb-table/nb-table.component';
-import { CreateParameterModalComponent } from '../create-parameter-modal/create-parameter-modal.component';
 import { ParameterService } from '@shared/services/parameter.service';
-import {Subject, takeUntil } from 'rxjs';
+import {Subject } from 'rxjs';
+import { ParameterModalComponent } from '../parameter-modal/parameter-modal.component';
 
 @Component({
   selector: 'app-parameters-page',
@@ -70,7 +70,15 @@ export class ParametersPageComponent implements OnInit {
   }
 
   openParameterModal(): void {
-    this._dialogService.open(CreateParameterModalComponent)
+    this._dialogService.open(ParameterModalComponent, {
+      context: {
+        certificateTypes: this.certificateTypes,
+        isEditMode: false,
+        modalTitle: 'Crear Nuevo Parámetro',
+      },
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+    })
       .onClose
       .subscribe((newParameter: CertificateField | null) => {
         if (newParameter) {
