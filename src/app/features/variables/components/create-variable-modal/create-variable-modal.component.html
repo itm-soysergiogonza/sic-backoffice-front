@@ -6,8 +6,10 @@
   <nb-card-body>
     <form [formGroup]="variableForm" (ngSubmit)="submit()">
       <div class="form-group">
-        <label for="certificateTypeId">ID Tipo Certificado</label>
-        <input nbInput fullWidth id="certificateTypeId" type="number" formControlName="certificateTypeId" placeholder="Ej. 3" />
+        <label for="certificateTypeId">Tipo de Certificado</label>
+        <nb-select fullWidth id="certificateTypeId" formControlName="certificateTypeId" placeholder="Seleccione un tipo de certificado">
+          <nb-option *ngFor="let type of certificateTypes" [value]="type.id">{{ type.name }}</nb-option>
+        </nb-select>
       </div>
 
       <div class="form-group">

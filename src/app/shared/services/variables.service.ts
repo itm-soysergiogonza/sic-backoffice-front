@@ -24,5 +24,16 @@ export class VariablesService {
       )
   }
 
+  removeVariable(id: number): Observable<Variable> {
+    return this._http.delete<Variable>(`${this._API_URL}/api/certificate/variable/${id}`)
+      .pipe(
+        tap(() => {
+          const currentVariables = this._variables.getValue();
+          const updatedVariables = currentVariables.filter(variable => variable.id !== id);
+          this._variables.next(updatedVariables);
+        })
+      )
+  }
+
 
 }

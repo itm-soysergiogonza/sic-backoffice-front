@@ -15,7 +15,6 @@ import {
 } from '@nebular/theme';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CertificatesService } from '@shared/services/certificates.service';
-import { TemplateService } from '@shared/services/template.service';
 import { Template } from '@shared/models/interfaces/template.interface';
 import { Variable } from '@shared/models/interfaces/variables.interface';
 import { VariablesService } from '@shared/services/variables.service';
@@ -57,7 +56,7 @@ export class NbTableVariableComponent implements OnInit {
   sortDirection: NbSortDirection = NbSortDirection.NONE;
 
   constructor(
-    private _dataSourceBuilder: NbTreeGridDataSourceBuilder<Template>,
+    private _dataSourceBuilder: NbTreeGridDataSourceBuilder<Variable>,
     private _variableService: VariablesService,
     private _dialogService: NbDialogService,
     private _certificatesService: CertificatesService,
@@ -148,9 +147,8 @@ export class NbTableVariableComponent implements OnInit {
   }*/
 
   deleteVariable(variable: Variable): void {
-    console.log('Eliminar variable:', variable);
-   /* if (confirm('¿Está seguro de que desea eliminar esta plantilla?')) {
-      this._variableService.removeVariable(variable.id)
+    if (confirm('¿Está seguro de que desea eliminar esta plantilla?')) {
+      this._variableService.removeVariable(variable?.id)
         .pipe(takeUntilDestroyed(this._destroyRef))
         .subscribe({
           next: () => {
@@ -161,7 +159,7 @@ export class NbTableVariableComponent implements OnInit {
             console.error('Error al eliminar la plantilla:', error);
           }
         });
-    }*/
+    }
   }
 
   editParameter(parameter: Variable): void {
@@ -203,5 +201,9 @@ export class NbTableVariableComponent implements OnInit {
           }
         });
     }*/
+  }
+
+  refreshTable(): void {
+    this.loadVariable();
   }
 }
