@@ -12,13 +12,13 @@ import {
   NbDialogService,
 } from '@nebular/theme';
 import { Subject, takeUntil } from 'rxjs';
-import { CertificationCardComponent } from '../certification-card/certification-card.component';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { CertificateType } from '@shared/models/interfaces/certificate.interface';
 import { CreateCertificateModalComponent } from '../create-certificate-modal/create-certificate-modal.component';
+import { NbTableTemplateComponent } from '../nb-table-template/nb-table-template.component';
 
 @Component({
-  selector: 'app-certification-page',
+  selector: 'app-template-page',
   imports: [
     CommonModule,
     FormsModule,
@@ -27,13 +27,13 @@ import { CreateCertificateModalComponent } from '../create-certificate-modal/cre
     NbButtonModule,
     NbInputModule,
     NbCardModule,
-    CertificationCardComponent,
     NbSearchModule,
+    NbTableTemplateComponent,
   ],
-  templateUrl: './certification-page.component.html',
-  styleUrl: './certification-page.component.scss',
+  templateUrl: './template-page.component.html',
+  styleUrl: './template-page.component.scss',
 })
-export class CertificationPageComponent implements OnInit, OnDestroy {
+export class TemplatePageComponent implements OnInit, OnDestroy {
   certificateTypes: CertificateType[] = [];
   searchTerm = '';
   filteredCertificates: CertificateType[] = [];

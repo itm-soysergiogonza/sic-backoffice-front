@@ -5,7 +5,7 @@ import { NbButtonModule, NbIconModule, NbCardModule, NbTooltipModule } from '@ne
 import { CertificateType } from '@shared/models/interfaces/certificate.interface';
 
 @Component({
-  selector: 'app-certification-card',
+  selector: 'app-template-card',
   standalone: true,
   imports: [
     CommonModule,
@@ -14,10 +14,10 @@ import { CertificateType } from '@shared/models/interfaces/certificate.interface
     NbCardModule,
     NbTooltipModule
   ],
-  templateUrl: './certification-card.component.html',
-  styleUrls: ['./certification-card.component.scss']
+  templateUrl: './template-card.component.html',
+  styleUrls: ['./template-card.component.scss']
 })
-export class CertificationCardComponent {
+export class TemplateCardComponent {
   @Input() certificate!: CertificateType;
 
   constructor(private _router: Router) {}

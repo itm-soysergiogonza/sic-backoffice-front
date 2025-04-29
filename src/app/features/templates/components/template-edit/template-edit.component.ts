@@ -5,11 +5,11 @@ import { EditorComponent } from '@features/code-editor/components/editor/editor.
 import { NbBadgeModule, NbCardModule } from '@nebular/theme';
 
 @Component({
-  selector: 'app-certification-edit',
+  selector: 'app-template-edit',
   imports: [CommonModule, NbBadgeModule, NbCardModule, EditorComponent],
-  templateUrl: './certification-edit.component.html',
-  styleUrl: './certification-edit.component.scss',
+  templateUrl: './template-edit.component.html',
+  styleUrl: './template-edit.component.scss',
 })
-export class CertificationEditComponent {
+export class TemplateEditComponent {
   @Input() certificate!: CertificateType;
 }

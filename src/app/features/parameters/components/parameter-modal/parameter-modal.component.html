@@ -1,13 +1,6 @@
 <nb-card>
   <nb-card-header>
     <h3>{{ modalTitle }}</h3>
-    @if (isEditMode && parameterToEdit) {
-      <div class="parameter-info">
-        <p>Editando parámetro: <strong>{{ parameterToEdit.name }}</strong></p>
-        <p>Tipo: <strong>{{ parameterToEdit.type }}</strong></p>
-        <p>Tipo de Certificado: <strong>{{ parameterToEdit.certificateType?.name }}</strong></p>
-      </div>
-    }
   </nb-card-header>
   <nb-card-body>
     <form [formGroup]="parameterForm">

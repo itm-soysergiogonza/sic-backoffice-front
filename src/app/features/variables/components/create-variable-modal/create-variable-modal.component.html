@@ -1,0 +1,37 @@
+<nb-card>
+  <nb-card-header>
+    <h3>Crear Variable</h3>
+  </nb-card-header>
+
+  <nb-card-body>
+    <form [formGroup]="variableForm" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="certificateTypeId">ID Tipo Certificado</label>
+        <input nbInput fullWidth id="certificateTypeId" type="number" formControlName="certificateTypeId" placeholder="Ej. 3" />
+      </div>
+
+      <div class="form-group">
+        <label for="context">Contexto</label>
+        <input nbInput fullWidth id="context" formControlName="context" placeholder="Ej. info, detail, header" />
+      </div>
+
+      <div class="form-group">
+        <label for="sql">Consulta SQL</label>
+        <textarea nbInput fullWidth id="sql" formControlName="sql" placeholder="Ej. SELECT nombre AS nombre ..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="list">¿Es una lista?</label>
+        <nb-select fullWidth id="list" formControlName="list">
+          <nb-option [value]="true">Sí</nb-option>
+          <nb-option [value]="false">No</nb-option>
+        </nb-select>
+      </div>
+    </form>
+  </nb-card-body>
+
+  <nb-card-footer>
+    <button nbButton status="basic" (click)="cancel()">Cancelar</button>
+    <button nbButton status="primary" (click)="submit()" [disabled]="!variableForm.valid">Crear</button>
+  </nb-card-footer>
+</nb-card>

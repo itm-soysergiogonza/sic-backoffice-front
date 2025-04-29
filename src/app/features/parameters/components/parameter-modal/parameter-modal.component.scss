@@ -37,7 +37,7 @@ nb-card-body {
   .error-message {
     margin-top: 0.5rem;
     font-size: 0.875rem;
-    color: nb-theme(color-danger-default);
+    color: red;
   }
 
   .help-text {
@@ -114,7 +114,7 @@ nb-card-body {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   nb-icon {
     font-size: 1.2rem;
     animation: spin 1s linear infinite;
@@ -131,11 +131,11 @@ nb-card-body {
   padding: 1rem;
   background-color: nb-theme(background-basic-color-2);
   border-radius: nb-theme(border-radius);
-  
+
   p {
     margin: 0.5rem 0;
     color: nb-theme(text-basic-color);
-    
+
     strong {
       color: nb-theme(text-primary-color);
     }

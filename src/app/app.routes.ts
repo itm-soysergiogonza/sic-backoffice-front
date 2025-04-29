@@ -14,9 +14,9 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'certificados',
+        path: 'plantillas',
         loadChildren: () =>
-          import('@features/certifications/certifications.routes').then(
+          import('@features/templates/templates.routes').then(
             (m): Routes => m.CERTIFICATIONS_ROUTES,
           ),
       },
@@ -27,6 +27,13 @@ export const routes: Routes = [
             (m): Routes => m.PARAMETERS_ROUTES,
           ),
       },
+      {
+        path: 'variables',
+        loadChildren: () =>
+          import('@features/variables/variables.routes').then(
+            (m): Routes => m.VARIABLES_ROUTES,
+          ),
+      }
     ],
   },
   {
