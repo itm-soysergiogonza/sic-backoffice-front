@@ -1,10 +1,10 @@
 <nb-card>
   <nb-card-header>
-    <h3>{{ isEditMode ? 'Editar Variable' : 'Crear Variable' }}</h3>
+    <h3>{{ modalTitle }}</h3>
   </nb-card-header>
 
   <nb-card-body>
-    <form [formGroup]="variableForm" (ngSubmit)="submit()">
+    <form [formGroup]="variableForm">
       <div class="form-group">
         <label for="certificateTypeId">Tipo de Certificado</label>
         <nb-select fullWidth id="certificateTypeId" formControlName="certificateTypeId" placeholder="Seleccione un tipo de certificado">
@@ -34,6 +34,8 @@
 
   <nb-card-footer>
     <button nbButton status="basic" (click)="cancel()">Cancelar</button>
-    <button nbButton status="primary" (click)="submit()" [disabled]="!variableForm.valid">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+    <button nbButton status="primary" (click)="saveVariable()" [disabled]="!variableForm.valid">
+      {{ isEditMode ? 'Actualizar' : 'Crear' }}
+    </button>
   </nb-card-footer>
 </nb-card>

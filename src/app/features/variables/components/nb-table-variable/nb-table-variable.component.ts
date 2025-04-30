@@ -15,11 +15,11 @@ import {
 } from '@nebular/theme';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CertificatesService } from '@shared/services/certificates.service';
-import { Template } from '@shared/models/interfaces/template.interface';
 import { Variable } from '@shared/models/interfaces/variables.interface';
 import { VariablesService } from '@shared/services/variables.service';
-import { CreateVariableModalComponent } from '../create-variable-modal/create-variable-modal.component';
 import {catchError, EMPTY } from 'rxjs';
+import { VariableModalComponent } from '../variable-modal/variable-modal.component';
+import { NotificationToastService } from '@shared/services/notification-toast-service.service';
 
 interface TreeNode<T> {
   data: T;
@@ -62,6 +62,7 @@ export class NbTableVariableComponent implements OnInit {
     private _variableService: VariablesService,
     private _dialogService: NbDialogService,
     private _certificatesService: CertificatesService,
+    private _notificationService: NotificationToastService
   ) {
     this.dataSource = this._dataSourceBuilder.create([]);
   }
@@ -100,7 +101,8 @@ export class NbTableVariableComponent implements OnInit {
           }
         },
         error: (error: Error) => {
-          console.error('Error loading parameters:', error);
+          console.error('Error loading variables:', error);
+          this._notificationService.showError('Error al cargar las variables', 'Error');
         },
       })
   }
@@ -149,16 +151,18 @@ export class NbTableVariableComponent implements OnInit {
   }*/
 
   deleteVariable(variable: Variable): void {
-    if (confirm('¿Está seguro de que desea eliminar esta plantilla?')) {
+    if (confirm('¿Está seguro de que desea eliminar esta variable?')) {
       this._variableService.removeVariable(variable?.id)
         .pipe(takeUntilDestroyed(this._destroyRef))
         .subscribe({
           next: () => {
-            console.log('Plantilla eliminada:', variable);
+            console.log('Variable eliminada:', variable);
+            this._notificationService.showSuccess('Variable eliminada exitosamente', 'Éxito');
             this.loadVariable();
           },
           error: (error) => {
-            console.error('Error al eliminar la plantilla:', error);
+            console.error('Error al eliminar la variable:', error);
+            this._notificationService.showError('Error al eliminar la variable', 'Error');
           }
         });
     }
@@ -175,7 +179,7 @@ export class NbTableVariableComponent implements OnInit {
         return;
       }
 
-      const dialogRef = this._dialogService.open(CreateVariableModalComponent, {
+      const dialogRef = this._dialogService.open(VariableModalComponent, {
         closeOnBackdropClick: false,
         closeOnEsc: true,
         hasBackdrop: true,

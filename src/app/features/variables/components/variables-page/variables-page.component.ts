@@ -1,9 +1,11 @@
 import { Component, DestroyRef, inject, ViewChild } from '@angular/core';
 import {NbButtonModule, NbCardModule, NbDialogService, NbIconModule } from '@nebular/theme';
-import { CreateVariableModalComponent } from '../create-variable-modal/create-variable-modal.component';
 import { VariablesService } from '@shared/services/variables.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NbTableVariableComponent } from '../nb-table-variable/nb-table-variable.component';
+import { VariableModalComponent } from '../variable-modal/variable-modal.component';
+import { NotificationToastService } from '@shared/services/notification-toast-service.service';
+import { Variable } from '@shared/models/interfaces/variables.interface';
 
 @Component({
   selector: 'app-variables-page',
@@ -16,24 +18,39 @@ export class VariablesPageComponent {
 
   private _destroyRef = inject(DestroyRef);
 
-  constructor(private _dialogService: NbDialogService,
-              private _variableService: VariablesService,
-              ) {}
+  constructor(
+    private _dialogService: NbDialogService,
+    private _variableService: VariablesService,
+    private _notificationService: NotificationToastService
+  ) {}
 
-  createVariable() {
-    this._dialogService.open(CreateVariableModalComponent)
-      .onClose.subscribe((data: any) => {
-        if (data) {
-          this._variableService.createVariable(data)
-            .pipe(takeUntilDestroyed(this._destroyRef))
-            .subscribe({
-              next: () => {
-                this.tableComponent.refreshTable();
-              },
-              error: (error: Error) => {
-                console.error('Error creating variable:', error);
-              }
-            });
+  openTemplateVariable():void {
+    const dialogRef = this._dialogService.open(VariableModalComponent, {
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      hasBackdrop: true,
+      hasScroll: false,
+    });
+
+    setTimeout(() => {
+      const modalComponent = dialogRef.componentRef?.instance;
+      if (modalComponent) {
+        const emptyVariable: Variable = {
+          id: 0,
+          context: '',
+          sql: '',
+          list: false,
+          certificateTypeId: 0
+        };
+        modalComponent.initialize(emptyVariable, false);
+      }
+    });
+
+    dialogRef.onClose
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe((result) => {
+        if (result) {
+          this.tableComponent.refreshTable();
         }
       });
   }

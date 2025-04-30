@@ -24,6 +24,19 @@ export class VariablesService {
       )
   }
 
+  updateVariable(id: number, params: Partial<Variable>): Observable<Variable> {
+    return this._http.put<Variable>(
+      `${this._API_URL}/api/certificate/variable/${id}`,
+      params
+    ).pipe(
+      tap((variable: Variable) => {
+        if (variable && variable.id) {
+          this.getVariables();
+        }
+      }),
+    );
+  }
+
   removeVariable(id: number): Observable<Variable> {
     return this._http.delete<Variable>(`${this._API_URL}/api/certificate/variable/${id}`)
       .pipe(

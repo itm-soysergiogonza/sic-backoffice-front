@@ -27,10 +27,11 @@ import { CertificatesService } from '@shared/services/certificates.service';
 })
 export class TemplateModalComponent implements OnInit {
   templateForm: FormGroup;
+
   public certificateTypes: CertificateType[] = [];
   public isEditMode = false;
   public templateToEdit: Template | null = null;
-  public modalTitle = 'Crear Nueva Plantilla';
+  public modalTitle = '';
   public isSubmitting = false;
 
   private _destroyRef: DestroyRef = inject(DestroyRef);
@@ -75,7 +76,6 @@ export class TemplateModalComponent implements OnInit {
     this.modalTitle = isEdit ? 'Editar Plantilla' : 'Crear Nueva Plantilla';
 
    if (template) {
-      console.log('4. Configurando parámetro para edición');
       this.templateToEdit = { ...template };
       this._initializeFormWithTemplate();
     }
