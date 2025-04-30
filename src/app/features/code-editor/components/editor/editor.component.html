@@ -11,15 +11,82 @@
        </nb-select>
      </div>-->
     <div class="header-right">
-      <button nbButton ghost (click)="toggleParameters()">
-        <nb-icon [icon]="showParameters ? 'eye-off-outline' : 'eye-outline'"></nb-icon>
-        {{ showParameters ? 'Ocultar Parámetros' : 'Mostrar Parámetros' }}
+      <button nbButton ghost (click)="toggleVariables()">
+        <nb-icon [icon]="showVariables ? 'eye-off-outline' : 'eye-outline'"></nb-icon>
+        {{ showVariables ? 'Ocultar Variables' : 'Mostrar Variables' }}
       </button>
     </div>
   </div>
+
   <div class="editor-content">
+    <div class="parameters-pane" *ngIf="showVariables">
+      <div class="parameters-header" >
+        <h3 style="color: white; padding-inline-start: 2rem">Variables</h3>
+      </div>
+      <div class="parameters-content">
+        <nb-accordion>
+          <nb-accordion-item>
+            <nb-accordion-item-header>
+              GENERALES
+            </nb-accordion-item-header>
+
+            <nb-accordion-item-body>
+              <div class="variable-properties">
+                <div class="property-item" *ngIf="defaultVariables.length > 0">
+                  <div *ngFor="let prop of defaultVariables">
+                    <button
+                      nbButton
+                      ghost
+                      size="small"
+                      (click)="insertParameter(prop)">
+                      {{ prop }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </nb-accordion-item-body>
+          </nb-accordion-item>
+        </nb-accordion>
+        <nb-accordion>
+          <nb-accordion-item *ngFor="let variable of variables">
+            <nb-accordion-item-header>
+              {{ variable.context | uppercase }}
+            </nb-accordion-item-header>
+
+            <nb-accordion-item-body>
+              <div class="variable-properties">
+                <div class="property-item" *ngIf="variable.variables">
+                  <div *ngFor="let prop of variable.variables">
+                    <button
+                      nbButton
+                      ghost
+                      size="small"
+                      (click)="insertParameter(variable.context + '.' + prop)">
+                      {{ variable.context }}.{{ prop }}
+                    </button>
+                  </div>
+                </div>
+                <div class="property-item" *ngIf="variable.parameters">
+                  <div *ngFor="let param of variable.parameters">
+                    <button
+                      nbButton
+                      ghost
+                      size="small"
+                      (click)="insertParameter(variable.context + '.' + param)">
+                      {{ variable.context }}.{{ param }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </nb-accordion-item-body>
+          </nb-accordion-item>
+        </nb-accordion>
+
+      </div>
+    </div>
     <div class="editor-pane">
       <ngs-code-editor
+        #editor
         [theme]="theme"
         [codeModel]="model"
         [options]="options"
@@ -27,30 +94,7 @@
       </ngs-code-editor>
     </div>
 
-    <div class="parameters-pane" *ngIf="showParameters">
-      <div class="parameters-header">
-        <h3>Parámetros Disponibles</h3>
-      </div>
-      <div class="parameters-content">
-        <nb-accordion>
-          <nb-accordion-item *ngFor="let param of parameters">
-            <nb-accordion-item-header>
-              {{ param.label }}
-            </nb-accordion-item-header>
-            <nb-accordion-item-body>
-              <div class="parameter-details">
-                <p><strong>Tipo:</strong> {{ param.type }}</p>
-                <p><strong>Requerido:</strong> {{ param.required ? 'Sí' : 'No' }}</p>
-                <p *ngIf="param.placeholder"><strong>Placeholder:</strong> {{ param.placeholder }}</p>
-                <button nbButton size="small" (click)="insertParameter(param.name)">
-                  Insertar
-                </button>
-              </div>
-            </nb-accordion-item-body>
-          </nb-accordion-item>
-        </nb-accordion>
-      </div>
-    </div>
+
 
     <div class="preview-pane">
       <div class="preview-header">

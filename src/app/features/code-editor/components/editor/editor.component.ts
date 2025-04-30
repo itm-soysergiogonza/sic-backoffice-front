@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ParameterService } from '@shared/services/parameter.service';
@@ -15,9 +15,12 @@ import {
   NbTooltipModule,
 } from '@nebular/theme';
 import { CodeModel } from '@ngstack/code-editor';
-import { CodeEditorModule } from '@ngstack/code-editor';
+import { CodeEditorModule, CodeEditorComponent } from '@ngstack/code-editor';
+import * as monaco from 'monaco-editor';
 import { Parameter } from '@shared/models/interfaces/parameter.interface';
 import { EditorService, Template } from '../../services/editor.service';
+import { VariablesService } from '@shared/services/variables.service';
+import { Variable } from '@shared/models/interfaces/variables.interface';
 
 type LanguageType = 'html' | 'css';
 
@@ -56,15 +59,16 @@ interface TemplateParameter {
 export class EditorComponent implements OnInit {
   @Input() templateId?: number;
   @Input() certificateTypeId?: number;
-  @Input() parameters: Parameter[] = [];
+  @Input() variables: Variable[] = [];
   @Output() contentChange = new EventEmitter<string>();
+  @ViewChild('editor') editor!: CodeEditorComponent;
 
   theme = 'vs-dark';
   selectedLanguage: LanguageType = 'html';
   htmlContent = '';
   cssContent = '';
   previewContent!: SafeHtml;
-  showParameters = false;
+  showVariables = false;
 
   languages: LanguageOption[] = [
     { value: 'html', label: 'HTML' },
@@ -92,7 +96,8 @@ export class EditorComponent implements OnInit {
   constructor(
     private sanitizer: DomSanitizer,
     private _parametersService: ParameterService,
-    private _editorService: EditorService
+    private _editorService: EditorService,
+    private _variablesService: VariablesService
   ) {
     this.previewContent = this.sanitizer.bypassSecurityTrustHtml('');
   }
@@ -106,7 +111,7 @@ export class EditorComponent implements OnInit {
     }
 
     if (this.certificateTypeId) {
-      this.loadParameters();
+      this.loadVariables();
     }
   }
 
@@ -152,13 +157,19 @@ export class EditorComponent implements OnInit {
     }
   }
 
-  loadParameters() {
+  defaultVariables: string[] = [
+    "qrcodeBlock",
+    "qrcodeBlock",
+    "certCode",
+    "electronicSign",
+    "verificationLink"
+  ]
+
+  loadVariables() {
     if (this.certificateTypeId) {
-      console.log('Loading parameters for certificate type:', this.certificateTypeId);
-      this._editorService.getParametersByCertificateType(this.certificateTypeId).subscribe({
-        next: (parameters) => {
-          console.log('Parameters loaded:', parameters);
-          this.parameters = parameters;
+      this._variablesService.getVariablesByCertificateType(this.certificateTypeId).subscribe({
+        next: (variables) => {
+          this.variables = variables;
         },
         error: (error) => {
           console.error('Error loading parameters:', error);
@@ -187,26 +198,39 @@ export class EditorComponent implements OnInit {
     this.contentChange.emit(this.htmlContent);
   }
 
-  toggleParameters(): void {
-    this.showParameters = !this.showParameters;
-    console.log('Parameters visibility:', this.showParameters);
-    console.log('Current parameters:', this.parameters);
+  toggleVariables(): void {
+    this.showVariables = !this.showVariables;
+    console.log('Parameters visibility:', this.showVariables);
+    console.log('Current variable:', this.variables);
   }
 
   insertParameter(paramName: string): void {
     if (this.selectedLanguage === 'html') {
-      const currentValue = this.model.value;
-      const cursorPosition = this.model.value.length;
-      const parameterTag = `{{${paramName}}}`;
-      
-      this.model = {
-        ...this.model,
-        value: currentValue.slice(0, cursorPosition) + parameterTag + currentValue.slice(cursorPosition)
-      };
-      
-      this.htmlContent = this.model.value;
-      this.updatePreview();
-      this.contentChange.emit(this.htmlContent);
+      const editor = this.editor.editor;
+      if (editor) {
+        const position = editor.getPosition();
+        if (position) {
+          const range = new monaco.Range(
+            position.lineNumber,
+            position.column,
+            position.lineNumber,
+            position.column
+          );
+
+          const parameterTag = `\${${paramName}}`;
+          editor.executeEdits('insert-parameter', [
+            {
+              range,
+              text: parameterTag,
+              forceMoveMarkers: true
+            }
+          ]);
+
+          this.htmlContent = editor.getValue();
+          this.updatePreview();
+          this.contentChange.emit(this.htmlContent);
+        }
+      }
     }
   }
 
