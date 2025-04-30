@@ -1,0 +1,78 @@
+<nb-card>
+  <nb-card-body>
+    @if (certificateTypes.length == 0) {
+    <div class="center-card-body">
+      <nb-icon icon="alert-triangle-outline" pack="eva"></nb-icon>
+      <div class="message">
+        <h5>No existen tipos de certificado, prueba crear uno!</h5>
+      </div>
+    </div>
+    } @else {
+    <input
+      nbInput
+      [nbFilterInput]="dataSource"
+      id="search"
+      class="search-input"
+      placeholder="Buscar por nombre, etiqueta o tipo"
+    />
+    <table
+      [nbTreeGrid]="dataSource"
+      [nbSort]="dataSource"
+      (sort)="updateSort($event)"
+    >
+      <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
+      <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
+
+      <ng-container [nbTreeGridColumnDef]="nameColumn">
+        <th
+          nbTreeGridHeaderCell
+          [nbSortHeader]="getSortDirection(nameColumn)"
+          *nbTreeGridHeaderCellDef
+        >
+          Nombre
+        </th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          {{ row.data.name || "-" }}
+        </td>
+      </ng-container>
+
+      <ng-container [nbTreeGridColumnDef]="paidColumn">
+        <th
+          nbTreeGridHeaderCell
+          [nbSortHeader]="getSortDirection(paidColumn)"
+          *nbTreeGridHeaderCellDef
+        >
+          Es Pago
+        </th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          {{ row.data.paid == true ? "SI" : "NO" }}
+        </td>
+      </ng-container>
+
+      <ng-container [nbTreeGridColumnDef]="priceColumn">
+        <th
+          nbTreeGridHeaderCell
+          [nbSortHeader]="getSortDirection(priceColumn)"
+          *nbTreeGridHeaderCellDef
+        >
+          Precio
+        </th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          {{ row.data.price > 0 ? row.data.price : "Gratuito" }}
+        </td>
+      </ng-container>
+      <ng-container [nbTreeGridColumnDef]="'actions'">
+        <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>Acciones</th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          <button nbButton ghost status="primary" (click)="editType(row.data)">
+            <nb-icon icon="edit-outline"></nb-icon>
+          </button>
+          <button nbButton ghost status="danger" (click)="deleteType(row.data)">
+            <nb-icon icon="trash-outline"></nb-icon>
+          </button>
+        </td>
+      </ng-container>
+    </table>
+    }
+  </nb-card-body>
+</nb-card>

@@ -1,1 +1,20 @@
-<p>certificate-type works!</p>
+<div class="parameters-container">
+  <nb-card class="parameters-card">
+    <nb-card-header class="header">
+      <div class="header-content">
+        <h2>Tipos de Certificado</h2>
+        <button
+          nbButton
+          status="primary"
+          class="create-button"
+          size="medium"
+          (click)="openCertificateTypeModal()"
+        >
+          <nb-icon icon="plus-outline"></nb-icon>
+          <span>Añadir Tipo Certificado</span>
+        </button>
+      </div>
+    </nb-card-header>
+  </nb-card>
+  <app-types-list></app-types-list>
+</div>
