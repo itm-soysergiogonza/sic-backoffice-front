@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
 import { CertificateType } from '@shared/models/interfaces/certificate.interface';
+import { Parameter } from '@shared/models/interfaces/parameter.interface';
 
 export interface Template {
   id: number;
@@ -31,5 +32,9 @@ export class EditorService {
 
   saveTemplate(template: CreateTemplateDTO): Observable<Template> {
     return this._http.post<Template>(`${this._API_URL}/api/certificate/template`, template);
+  }
+
+  getParametersByCertificateType(certificateTypeId: number): Observable<Parameter[]> {
+    return this._http.get<Parameter[]>(`${this._API_URL}/api/certificate/parameter/certificate-type/${certificateTypeId}`);
   }
 }
