@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ParameterService } from '@shared/services/parameter.service';
@@ -16,6 +16,7 @@ import {
 import { CodeModel } from '@ngstack/code-editor';
 import { CodeEditorModule } from '@ngstack/code-editor';
 import { Parameter } from '@shared/models/interfaces/parameter.interface';
+import { EditorService, Template } from '../../services/editor.service';
 
 type LanguageType = 'html' | 'css';
 
@@ -51,6 +52,9 @@ interface TemplateParameter {
   styleUrl: './editor.component.scss',
 })
 export class EditorComponent implements OnInit {
+  @Input() templateId?: number;
+  @Output() contentChange = new EventEmitter<string>();
+
   theme = 'vs-dark';
   selectedLanguage: LanguageType = 'html';
   htmlContent = '';
@@ -63,197 +67,10 @@ export class EditorComponent implements OnInit {
     { value: 'css', label: 'CSS' },
   ];
 
-  defaultContent: Record<LanguageType, string> = {
-    html: `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <title>Certificado de Constancia</title>
-</head>
-<body>
-  <div class="certificate">
-    <header class="header">
-      <img ngSrc="{{institution.logo}}" alt="Logo ITM" class="logo" fill>
-      <div class="institution-info">
-        <p>Identificada ante el DANE con el número {{institution.dane}}</p>
-        <p>Registrada ante el ICFES con el código {{institution.icfes}}</p>
-      </div>
-    </header>
-
-    <div class="department">
-      <h2>DEPARTAMENTO DE ADMISIONES Y PROGRAMACIÓN ACADÉMICA</h2>
-    </div>
-
-    <div class="certifies">
-      <p class="certifies-title">EL SUSCRITO JEFE DE OFICINA - DEPARTAMENTO DE ADMISIONES Y PROGRAMACIÓN</p>
-      <p class="certifies-word">CERTIFICA</p>
-    </div>
-
-    <div class="content">
-      <p>Que <strong>{{student.name}}</strong>, identificado con <strong>{{student.id}}</strong>
-      de <strong>{{student.city}}</strong> y carné <strong>{{student.code}}</strong>, se matriculó para
-      estudiar en esta institución durante el período académico <strong>{{certificate.period}}</strong> al nivel <strong>6</strong> del programa
-      <strong>{{program.name}}</strong>, incorporado en el sistema interno del
-      SNIES mediante Registro N.º <strong>{{program.snies}}</strong>, con una duración de <strong>{{program.duration}}</strong> semestres.</p>
-
-      <p class="intensity">Intensidad semanal de {{program.intensity}} horas.</p>
-    </div>
-
-    <div class="note">
-      <p>NOTA: Este certificado se expide a solicitud del interesado.</p>
-    </div>
-
-    <div class="signature-section">
-      <p class="city-date">{{student.city}} {{certificate.date}}</p>
-      <div class="signature-line"></div>
-      <p class="signature-name">Juan Camilo Patiño Vanegas</p>
-      <p class="signature-title">Jefe Dpto. de Admisiones y Programación Académica</p>
-      <p class="signature-id">C.C. 8.060.849</p>
-    </div>
-
-    <footer class="footer">
-      <div class="generated-info">
-        <p>S.I.A (Registro Académico)</p>
-        <p>Generado por: {{student.name}}</p>
-        <p>{{certificate.date}}</p>
-      </div>
-      <div class="footer-logos">
-        <img ngSrc="/assets/images/footer-logo.png" alt="Logo Alcaldía de Medellín" class="footer-logo" fill>
-      </div>
-    </footer>
-  </div>
-</body>
-</html>`,
-    css: `/* Estilos del certificado */
-.certificate {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 40px;
-  background-color: white;
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  color: #333;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.logo {
-  max-width: 300px;
-  margin-bottom: 15px;
-}
-
-.institution-info {
-  font-size: 14px;
-  margin-bottom: 20px;
-}
-
-.department {
-  text-align: center;
-  margin: 30px 0;
-}
-
-.department h2 {
-  font-size: 16px;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.certifies {
-  text-align: center;
-  margin: 30px 0;
-}
-
-.certifies-title {
-  font-size: 14px;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin-bottom: 20px;
-}
-
-.certifies-word {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 20px 0;
-}
-
-.content {
-  text-align: justify;
-  margin: 30px 0;
-  padding: 0 20px;
-}
-
-.intensity {
-  margin: 20px 0;
-}
-
-.note {
-  margin: 30px 0;
-  font-style: italic;
-  font-size: 14px;
-}
-
-.signature-section {
-  margin: 40px 0;
-  text-align: left;
-}
-
-.city-date {
-  margin-bottom: 40px;
-}
-
-.signature-line {
-  width: 300px;
-  border-bottom: 1px solid #000;
-  margin: 10px 0;
-}
-
-.signature-name {
-  margin: 5px 0;
-  font-weight: bold;
-}
-
-.signature-title {
-  margin: 5px 0;
-  font-size: 14px;
-}
-
-.signature-id {
-  margin: 5px 0;
-  font-size: 14px;
-}
-
-.footer {
-  margin-top: 50px;
-  font-size: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.generated-info {
-  text-align: left;
-}
-
-.generated-info p {
-  margin: 3px 0;
-}
-
-.footer-logos {
-  text-align: right;
-}
-
-.footer-logo {
-  max-width: 150px;
-}`,
-  };
-
   model: CodeModel = {
     language: 'html',
     uri: 'main.html',
-    value: this.defaultContent.html,
+    value: '',
   };
 
   options = {
@@ -273,31 +90,68 @@ export class EditorComponent implements OnInit {
   constructor(
     private sanitizer: DomSanitizer,
     private _parametersService: ParameterService,
+    private _editorService: EditorService
   ) {
     this.previewContent = this.sanitizer.bypassSecurityTrustHtml('');
   }
 
   ngOnInit() {
-    this._parametersService.getParametersByCertificateType(1).subscribe({
-      next: (parameters: Parameter[]) => {
-        this.parameters = parameters;
-      },
-      error: (error: any) => {
-        console.error('Error cargando los parámetros', error);
-      },
-    });
+    if (this.templateId) {
+      this.loadTemplate();
+    } else {
+      this.loadBaseTemplate();
+    }
+  }
 
-    this.htmlContent = this.defaultContent.html;
-    this.cssContent = this.defaultContent.css;
+  loadBaseTemplate() {
+    const baseTemplate = `<!doctype html>
+  <html lang="es">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+      <title>Document</title>
+   </head>
+   <body>
+
+   </body>
+  </html>`;
+
+    this.htmlContent = baseTemplate;
+    this.model = {
+      ...this.model,
+      value: baseTemplate
+    };
     this.updatePreview();
+    this.contentChange.emit(baseTemplate);
+  }
+
+  loadTemplate() {
+    if (this.templateId) {
+      this._editorService.getTemplateById(this.templateId).subscribe({
+        next: (template: Template) => {
+          this.htmlContent = template.content;
+          this.model = {
+            ...this.model,
+            value: template.content
+          };
+          this.updatePreview();
+          this.contentChange.emit(template.content);
+        },
+        error: (error) => {
+          console.error('Error loading template:', error);
+        }
+      });
+    }
   }
 
   onLanguageChange(language: LanguageType): void {
     this.selectedLanguage = language;
     this.model = {
-      language: language,
+      ...this.model,
+      language,
       uri: `main.${language}`,
-      value: this.defaultContent[language],
+      value: language === 'html' ? this.htmlContent : this.cssContent,
     };
   }
 
@@ -308,6 +162,7 @@ export class EditorComponent implements OnInit {
       this.cssContent = value;
     }
     this.updatePreview();
+    this.contentChange.emit(this.htmlContent);
   }
 
   toggleParameters(): void {
@@ -321,15 +176,10 @@ export class EditorComponent implements OnInit {
   }
 
   private updatePreview(): void {
-    const combinedHtml = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>${this.cssContent}</style>
-        </head>
-        <body>${this.htmlContent}</body>
-      </html>
+    const combinedContent = `
+      <style>${this.cssContent}</style>
+      ${this.htmlContent}
     `;
-    this.previewContent = this.sanitizer.bypassSecurityTrustHtml(combinedHtml);
+    this.previewContent = this.sanitizer.bypassSecurityTrustHtml(combinedContent);
   }
 }

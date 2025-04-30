@@ -1,15 +1,15 @@
 <div class="editor-container">
   <div class="editor-header">
-    <div class="header-left">
-      <nb-select
-        [(ngModel)]="selectedLanguage"
-        (selectedChange)="onLanguageChange($event)"
-        placeholder="Select language">
-        @for (lang of languages ; track languages) {
-          <nb-option [value]="lang.value">{{ lang.label }}</nb-option>
-        }
-      </nb-select>
-    </div>
+    <!-- <div class="header-left">
+       <nb-select
+         [(ngModel)]="selectedTemplate"
+         (selectedChange)="selectTemplate($event)"
+         placeholder="Select Template">
+         @for (lang of languages ; track languages) {
+           <nb-option [value]="lang.value">{{ lang.label }}</nb-option>
+         }
+       </nb-select>
+     </div>-->
     <div class="header-right">
       <button nbButton ghost (click)="toggleParameters()">
         <nb-icon [icon]="showParameters ? 'eye-off-outline' : 'eye-outline'"></nb-icon>
@@ -18,7 +18,7 @@
     </div>
   </div>
   <div class="editor-content">
-    <div class="editor-pane" [class.with-parameters]="showParameters">
+    <div class="editor-pane">
       <ngs-code-editor
         [theme]="theme"
         [codeModel]="model"
@@ -26,32 +26,6 @@
         (valueChanged)="onCodeChanged($event)">
       </ngs-code-editor>
     </div>
-    @if (showParameters) {
-      <div class="parameters-pane">
-        <nb-accordion>
-          <nb-accordion-item>
-            <nb-accordion-item-header>
-              <span>Parámetros</span>
-            </nb-accordion-item-header>
-            <nb-accordion-item-body>
-              <div class="parameters-grid">
-                @for (param of parameters; track param.name) {
-                  <nb-card class="parameter-card" (click)="insertParameter(param.name)">
-                    <nb-card-header>
-                      <code>{{ param.name }}</code>
-                    </nb-card-header>
-                    <nb-card-body>
-                      <!--<p>{{ param.description }}</p>
-                      <small>Ejemplo: {{ param.example }}</small>-->
-                    </nb-card-body>
-                  </nb-card>
-                }
-              </div>
-            </nb-accordion-item-body>
-          </nb-accordion-item>
-        </nb-accordion>
-      </div>
-    }
 
     <div class="preview-pane">
       <div class="preview-header">

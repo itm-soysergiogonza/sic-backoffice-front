@@ -19,6 +19,7 @@ import { TemplateModalComponent } from '../template-modal/template-modal.compone
 import { Template } from '@shared/models/interfaces/template.interface';
 import { NbTableComponent } from '@features/parameters/components/nb-table/nb-table.component';
 import { TemplateService } from '@shared/services/template.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-template-page',
@@ -47,6 +48,7 @@ export class TemplatePageComponent implements OnInit, OnDestroy {
     private _searchService: NbSearchService,
     private _dialogService: NbDialogService,
     private _templateService: TemplateService,
+    public _router: Router
   ) {}
 
   ngOnInit(): void {
@@ -90,7 +92,7 @@ export class TemplatePageComponent implements OnInit, OnDestroy {
 
 
 
-  openTemplateModal(): void {
+  /*openTemplateModal(): void {
     this._dialogService.open(TemplateModalComponent, {
       context: {
         certificateTypes: this.certificateTypes,
@@ -117,5 +119,12 @@ export class TemplatePageComponent implements OnInit, OnDestroy {
             });
         }
       });
+  }*/
+
+  createTemplate(): void {
+    const temporalId = `temp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    this._router.navigate([`plantillas/${temporalId}/editar`], {
+      state: { tempTemplateId: temporalId }
+    });
   }
 }
