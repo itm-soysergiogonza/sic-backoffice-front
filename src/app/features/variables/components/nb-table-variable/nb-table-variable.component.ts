@@ -1,5 +1,10 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   NbCardModule,
   NbInputModule,
@@ -17,9 +22,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { Variable } from '@shared/models/interfaces/variables.interface';
 import { VariablesService } from '@shared/services/variables.service';
-import {catchError, EMPTY } from 'rxjs';
+import { catchError, EMPTY } from 'rxjs';
 import { VariableModalComponent } from '../variable-modal/variable-modal.component';
 import { NotificationToastService } from '@shared/services/notification-toast-service.service';
+import { CertificateType } from '@shared/models/interfaces/certificate.interface';
 
 interface TreeNode<T> {
   data: T;
@@ -39,8 +45,9 @@ interface TreeNode<T> {
     NbButtonModule,
     NbIconModule,
     NbSelectModule,
-    FormsModule
-  ]
+    ReactiveFormsModule,
+    FormsModule,
+  ],
 })
 export class NbTableVariableComponent implements OnInit {
   customColumn = 'context';
@@ -49,8 +56,10 @@ export class NbTableVariableComponent implements OnInit {
 
   dataSource: NbTreeGridDataSource<Variable>;
   variables: Variable[] = [];
-  certificateTypes: Variable[] = [];
+  certificateTypes: CertificateType[] = [];
   selectedCertificateType: string = '';
+  certificateType = new FormControl(0, [Validators.required]);
+  public isLoadingCertificateTypes = false;
 
   private _destroyRef = inject(DestroyRef);
 
@@ -69,7 +78,6 @@ export class NbTableVariableComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCertificateTypes();
-    this.loadVariable();
   }
 
   loadCertificateTypes(): void {
@@ -84,14 +92,15 @@ export class NbTableVariableComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al cargar los tipos de certificados:', error);
-        }
+        },
       });
 
     this._certificatesService.getCertificateTypes();
   }
 
-  loadVariable() {
-    this._variableService.getVariables()
+  loadVariable(certificateTypeId: number) {
+    this._variableService
+      .getVariablesByCertificateType(certificateTypeId)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (variables: Variable[]) => {
@@ -102,27 +111,24 @@ export class NbTableVariableComponent implements OnInit {
         },
         error: (error: Error) => {
           console.error('Error loading variables:', error);
-          this._notificationService.showError('Error al cargar las variables', 'Error');
+          this._notificationService.showError(
+            'Error al cargar las variables',
+            'Error'
+          );
         },
-      })
+      });
   }
 
   filterVariable(): void {
-    let filteredVariables: Variable[]= [...this.variables];
+    let filteredVariables: Variable[] = [...this.variables];
     this.updateDataSource(filteredVariables);
   }
-
-  /*onCertificateTypeChange(value: string): void {
-    console.log('Tipo de certificado seleccionado:', value);
-    this.selectedCertificateType = value;
-    this.filterParameters();
-  }*/
 
   updateDataSource(variable: Variable[]): void {
     const treeData: TreeNode<Variable>[] = variable.map((data: Variable) => ({
       data: data,
       expanded: false,
-      children: []
+      children: [],
     }));
 
     this.dataSource.setData(treeData);
@@ -152,62 +158,84 @@ export class NbTableVariableComponent implements OnInit {
 
   deleteVariable(variable: Variable): void {
     if (confirm('¿Está seguro de que desea eliminar esta variable?')) {
-      this._variableService.removeVariable(variable?.id)
+      this._variableService
+        .removeVariable(variable?.id)
         .pipe(takeUntilDestroyed(this._destroyRef))
         .subscribe({
           next: () => {
             console.log('Variable eliminada:', variable);
-            this._notificationService.showSuccess('Variable eliminada exitosamente', 'Éxito');
-            this.loadVariable();
+            this._notificationService.showSuccess(
+              'Variable eliminada exitosamente',
+              'Éxito'
+            );
+            this.loadVariable(
+              this.certificateType.value ? this.certificateType.value : 0
+            );
           },
           error: (error) => {
             console.error('Error al eliminar la variable:', error);
-            this._notificationService.showError('Error al eliminar la variable', 'Error');
-          }
+            this._notificationService.showError(
+              'Error al eliminar la variable',
+              'Error'
+            );
+          },
         });
     }
   }
 
   editVariable(variable: Variable): void {
-      if (!variable) {
-        console.warn('No se recibió variable para editar');
-        return;
+    if (!variable) {
+      console.warn('No se recibió variable para editar');
+      return;
+    }
+
+    if (!variable.id) {
+      console.warn('La variable no tiene ID:', variable);
+      return;
+    }
+
+    const dialogRef = this._dialogService.open(VariableModalComponent, {
+      closeOnBackdropClick: false,
+      closeOnEsc: true,
+      hasBackdrop: true,
+      hasScroll: false,
+    });
+
+    setTimeout(() => {
+      const modalComponent = dialogRef.componentRef?.instance;
+      if (modalComponent) {
+        modalComponent.initialize(variable, true);
       }
+    });
 
-      if (!variable.id) {
-        console.warn('La variable no tiene ID:', variable);
-        return;
-      }
-
-      const dialogRef = this._dialogService.open(VariableModalComponent, {
-        closeOnBackdropClick: false,
-        closeOnEsc: true,
-        hasBackdrop: true,
-        hasScroll: false,
-      });
-
-      setTimeout(() => {
-        const modalComponent = dialogRef.componentRef?.instance;
-        if (modalComponent) {
-          modalComponent.initialize(variable, true);
+    dialogRef.onClose
+      .pipe(
+        takeUntilDestroyed(this._destroyRef),
+        catchError((error) => {
+          console.error('Error al abrir el modal de edición:', error);
+          return EMPTY;
+        })
+      )
+      .subscribe((result) => {
+        if (result) {
+          this.loadVariable(
+            this.certificateType.value ? this.certificateType.value : 0
+          );
         }
       });
+  }
 
-      dialogRef.onClose
-        .pipe(
-          takeUntilDestroyed(this._destroyRef),
-          catchError(error => {
-            console.error('Error al abrir el modal de edición:', error);
-            return EMPTY;
-          })
-        )
-        .subscribe((result) => {
-          if (result) {
-            this.loadVariable();
-          }
-        });
-    }
   refreshTable(): void {
-    this.loadVariable();
+    this.loadVariable(
+      this.certificateType.value ? this.certificateType.value : 0
+    );
+  }
+
+  onCertificateTypeChange(value: number): void {
+    this.loadVariable(value);
+  }
+
+  public isInvalid(): boolean {
+    return this.certificateType.invalid;
   }
 }

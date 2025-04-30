@@ -1,5 +1,10 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   NbCardModule,
   NbInputModule,
@@ -13,7 +18,10 @@ import {
   NbDialogService,
   NbSelectModule,
 } from '@nebular/theme';
-import { CertificateField, CertificateType } from '@shared/models/interfaces/certificate.interface';
+import {
+  CertificateField,
+  CertificateType,
+} from '@shared/models/interfaces/certificate.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { TemplateService } from '@shared/services/template.service';
@@ -39,8 +47,9 @@ interface TreeNode<T> {
     NbButtonModule,
     NbIconModule,
     NbSelectModule,
-    FormsModule
-  ]
+    ReactiveFormsModule,
+    FormsModule,
+  ],
 })
 export class NbTableTemplateComponent implements OnInit {
   customColumn = 'name';
@@ -52,6 +61,10 @@ export class NbTableTemplateComponent implements OnInit {
   certificateTypes: CertificateType[] = [];
   selectedCertificateType: string = '';
 
+  certificateType = new FormControl(0, [Validators.required]);
+
+  public isLoadingCertificateTypes = false;
+
   private _destroyRef = inject(DestroyRef);
 
   sortColumn = '';
@@ -61,17 +74,16 @@ export class NbTableTemplateComponent implements OnInit {
     private _dataSourceBuilder: NbTreeGridDataSourceBuilder<Template>,
     private _templatesService: TemplateService,
     private _dialogService: NbDialogService,
-    private _certificatesService: CertificatesService,
+    private _certificatesService: CertificatesService
   ) {
     this.dataSource = this._dataSourceBuilder.create([]);
   }
 
   ngOnInit(): void {
-    // this.loadCertificateTypes();
-    this.loadTemplates();
+    this.loadCertificateTypes();
   }
 
-  /*loadCertificateTypes(): void {
+  loadCertificateTypes(): void {
     this._certificatesService.certificateType
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
@@ -83,18 +95,21 @@ export class NbTableTemplateComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al cargar los tipos de certificados:', error);
-        }
+        },
       });
 
     this._certificatesService.getCertificateTypes();
-  }*/
-
-  loadTemplates() {
-    this._templatesService.getTemplates()
+  }
+  loadTemplates(certificateTypeId: number) {
+    this._templatesService
+      .getTemplatesByCertificateType(certificateTypeId)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (templates: Template[]) => {
+          console.log("here1")
           if (Array.isArray(templates)) {
+            console.log("here2")
+
             this.templates = templates;
             this.filterTemplates();
           }
@@ -102,11 +117,11 @@ export class NbTableTemplateComponent implements OnInit {
         error: (error: Error) => {
           console.error('Error loading parameters:', error);
         },
-      })
+      });
   }
 
   filterTemplates(): void {
-    let filteredTemplates: Template[]= [...this.templates];
+    let filteredTemplates: Template[] = [...this.templates];
     this.updateDataSource(filteredTemplates);
     console.log('Plantillas filtradas:', filteredTemplates);
   }
@@ -121,7 +136,7 @@ export class NbTableTemplateComponent implements OnInit {
     const treeData: TreeNode<Template>[] = parameters.map((param) => ({
       data: param,
       expanded: false,
-      children: []
+      children: [],
     }));
 
     this.dataSource.setData(treeData);
@@ -151,57 +166,70 @@ export class NbTableTemplateComponent implements OnInit {
 
   deleteTemplate(template: Template): void {
     if (confirm('¿Está seguro de que desea eliminar esta plantilla?')) {
-      this._templatesService.removeTemplate(template.id)
+      this._templatesService
+        .removeTemplate(template.id)
         .pipe(takeUntilDestroyed(this._destroyRef))
         .subscribe({
           next: () => {
             console.log('Plantilla eliminada:', template);
-            this.loadTemplates();
+            this.loadTemplates(
+              this.certificateType.value ? this.certificateType.value : 0
+            );
           },
           error: (error) => {
             console.error('Error al eliminar la plantilla:', error);
-          }
+          },
         });
     }
   }
 
   editTemplate(template: Template): void {
-      if (!template) {
-        console.warn('No se recibió parámetro para editar');
-        return;
+    if (!template) {
+      console.warn('No se recibió parámetro para editar');
+      return;
+    }
+
+    if (!template.id) {
+      console.warn('La plantilla no tiene ID:', template);
+      return;
+    }
+
+    const dialogRef = this._dialogService.open(TemplateModalComponent, {
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      hasBackdrop: true,
+      hasScroll: false,
+    });
+
+    setTimeout(() => {
+      const modalComponent = dialogRef.componentRef?.instance;
+      if (modalComponent) {
+        modalComponent.initialize(template, true);
       }
+    });
 
-      if (!template.id) {
-        console.warn('La plantilla no tiene ID:', template);
-        return;
-      }
-
-      const dialogRef = this._dialogService.open(TemplateModalComponent, {
-        closeOnBackdropClick: false,
-        closeOnEsc: false,
-        hasBackdrop: true,
-        hasScroll: false,
-      });
-
-      setTimeout(() => {
-        const modalComponent = dialogRef.componentRef?.instance;
-        if (modalComponent) {
-          modalComponent.initialize(template, true);
+    dialogRef.onClose
+      .pipe(
+        takeUntilDestroyed(this._destroyRef),
+        catchError((error) => {
+          console.error('Error al abrir el modal de edición:', error);
+          return EMPTY;
+        })
+      )
+      .subscribe((result) => {
+        if (result) {
+          this.loadTemplates(
+            this.certificateType.value ? this.certificateType.value : 0
+          );
         }
       });
+  }
 
-      dialogRef.onClose
-        .pipe(
-          takeUntilDestroyed(this._destroyRef),
-          catchError(error => {
-            console.error('Error al abrir el modal de edición:', error);
-            return EMPTY;
-          })
-        )
-        .subscribe((result) => {
-          if (result) {
-            this.loadTemplates();
-          }
-        });
-    }
+  onCertificateTypeChange(value: number): void {
+    this.loadTemplates(value);
+  }
+
+  public isInvalid(): boolean {
+    return this.certificateType.invalid;
+  }
 }

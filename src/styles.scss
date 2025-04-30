@@ -1,7 +1,166 @@
-@use 'themes' as *;
+@use "themes" as *;
 
-@use '@nebular/theme/styles/globals' as *;
+@use "@nebular/theme/styles/globals" as *;
 
 @include nb-install() {
   @include nb-theme-global();
+}
+
+nb-card {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-input {
+  margin-bottom: 10px;
+  flex: 1;
+  width: 100%;
+  max-width: 300px;
+}
+
+.center-card-body {
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.center-card-body nb-icon {
+  font-size: 64px;
+}
+
+.message {
+  font-size: 0.95rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+@media (width < 400px) {
+  .nb-column-name,
+  .nb-column-size {
+    width: 50%;
+  }
+}
+
+@media (width < 500px) {
+  .nb-column-name,
+  .nb-column-size,
+  .nb-column-kind {
+    width: 33.333%;
+  }
+}
+
+@media (width < 600px) {
+  .nb-column-name {
+    width: 31%;
+  }
+  .nb-column-size,
+  .nb-column-kind,
+  .nb-column-items {
+    width: 23%;
+  }
+}
+
+.nb-tree-grid-header-cell,
+.nb-tree-grid-cell,
+.nb-tree-grid-footer-cell {
+  border: 1px solid var(--color-primary-200);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.nb-tree-grid-header-cell {
+  background-color: var(--color-primary-50);
+  font-weight: 600;
+}
+
+:host ::ng-deep {
+  .nb-tree-grid-header-cell nb-select {
+    .select-button {
+      min-height: 2rem;
+      padding: 0.25rem 0.5rem;
+    }
+  }
+}
+
+button {
+  margin: 0 0.25rem;
+
+  nb-icon {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .certificate-type-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.table-container {
+  position: relative;
+  min-height: 200px;
+  max-height: calc(100vh - 250px);
+  overflow: auto;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mat-mdc-row:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: center;
+}
+
+.mat-column-name {
+  min-width: 150px;
+}
+
+.mat-column-description {
+  min-width: 200px;
+}
+
+.mat-column-example {
+  min-width: 150px;
+}
+
+.mat-column-category {
+  min-width: 120px;
+}
+
+.search-label {
+  margin-right: 10px;
+}
+
+@media (with > 768px) {
+  .parameters-actions {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .search-input {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  .mat-column-description,
+  .mat-column-example {
+    display: none;
+  }
 }

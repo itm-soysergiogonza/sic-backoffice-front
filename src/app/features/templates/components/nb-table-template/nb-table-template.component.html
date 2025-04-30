@@ -1,62 +1,129 @@
-<nb-card-body>
-  <div class="parameters-actions">
-    <label class="search-label" for="search">
-      <span>Buscar:</span>
-      <input nbInput [nbFilterInput]="dataSource" id="search" class="search-input" placeholder="Buscar por nombre, etiqueta o tipo" />
-    </label>
-  </div>
+<nb-card>
+  <nb-card-header>
+    <div class="header-content">
+      <div class="select-container">
+        <nb-select
+          shape="semi-round"
+          size="large"
+          id="certificateTypeId"
+          (selectedChange)="onCertificateTypeChange($event)"
+          [formControl]="certificateType"
+          [placeholder]="
+            isLoadingCertificateTypes
+              ? 'Cargando...'
+              : 'Seleccione un tipo de certificado'
+          "
+          [status]="isInvalid() ? 'danger' : 'basic'"
+          fullWidth="true"
+        >
+          @for (type of certificateTypes; track type.id) {
+          <nb-option [value]="type.id">{{ type.name }}</nb-option>
+          }
+        </nb-select>
+        @if (isLoadingCertificateTypes) {
+        <div class="loading-indicator">
+          <nb-icon icon="loader-outline" pack="eva"></nb-icon>
+        </div>
+        }
+      </div>
+      @if (isInvalid()) {
+      <div class="error-message">El tipo de certificado es requerido</div>
+      }
+    </div>
+  </nb-card-header>
+  <nb-card-body>
+    @if (certificateType.value == 0) {
+    <div class="center-card-body">
+      <nb-icon icon="alert-triangle-outline" pack="eva"></nb-icon>
+      <div class="message">
+        <h5>Debe seleccionar un tipo de certificado para cargar datos</h5>
+      </div>
+    </div>
+    } @else {
+    <input
+      nbInput
+      [nbFilterInput]="dataSource"
+      id="search"
+      class="search-input"
+      placeholder="Buscar por nombre, etiqueta o tipo"
+    />
+    <table
+      [nbTreeGrid]="dataSource"
+      [nbSort]="dataSource"
+      (sort)="updateSort($event)"
+    >
+      <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
+      <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
 
-  <table [nbTreeGrid]="dataSource" [nbSort]="dataSource" (sort)="updateSort($event)">
-    <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
-    <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
+      <ng-container [nbTreeGridColumnDef]="customColumn">
+        <th
+          nbTreeGridHeaderCell
+          [nbSortHeader]="getSortDirection(customColumn)"
+          *nbTreeGridHeaderCellDef
+        >
+          Nombre
+        </th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          {{ row.data.name || "-" }}
+        </td>
+      </ng-container>
 
-    <ng-container [nbTreeGridColumnDef]="customColumn">
-      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(customColumn)" *nbTreeGridHeaderCellDef>
-       Nombre
-      </th>
-      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.name || '-'}}</td>
-    </ng-container>
+      <ng-container [nbTreeGridColumnDef]="'content'">
+        <th
+          nbTreeGridHeaderCell
+          [nbSortHeader]="getSortDirection('content')"
+          *nbTreeGridHeaderCellDef
+        >
+          Content
+        </th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          {{ row.data.content || "-" }}
+        </td>
+      </ng-container>
 
-    <ng-container [nbTreeGridColumnDef]="'content'">
-      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('content')" *nbTreeGridHeaderCellDef>
-       Content
-      </th>
-      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.content || '-'}}</td>
-    </ng-container>
+      <!--    <ng-container [nbTreeGridColumnDef]="'type'">-->
+      <!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('type')" *nbTreeGridHeaderCellDef>-->
+      <!--        Tipo-->
+      <!--      </th>-->
+      <!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.type || '-'}}</td>-->
+      <!--    </ng-container>-->
 
-<!--    <ng-container [nbTreeGridColumnDef]="'type'">-->
-<!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('type')" *nbTreeGridHeaderCellDef>-->
-<!--        Tipo-->
-<!--      </th>-->
-<!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.type || '-'}}</td>-->
-<!--    </ng-container>-->
+      <!--    <ng-container [nbTreeGridColumnDef]="'required'">-->
+      <!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('required')" *nbTreeGridHeaderCellDef>-->
+      <!--        Requerido-->
+      <!--      </th>-->
+      <!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.required ? 'Sí' : 'No'}}</td>-->
+      <!--    </ng-container>-->
 
-<!--    <ng-container [nbTreeGridColumnDef]="'required'">-->
-<!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('required')" *nbTreeGridHeaderCellDef>-->
-<!--        Requerido-->
-<!--      </th>-->
-<!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.required ? 'Sí' : 'No'}}</td>-->
-<!--    </ng-container>-->
+      <!--    <ng-container [nbTreeGridColumnDef]="'placeholder'">-->
+      <!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('placeholder')" *nbTreeGridHeaderCellDef>-->
+      <!--       Placeholder-->
+      <!--      </th>-->
+      <!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.placeholder || '-'}}</td>-->
+      <!--    </ng-container>-->
 
-<!--    <ng-container [nbTreeGridColumnDef]="'placeholder'">-->
-<!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('placeholder')" *nbTreeGridHeaderCellDef>-->
-<!--       Placeholder-->
-<!--      </th>-->
-<!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.placeholder || '-'}}</td>-->
-<!--    </ng-container>-->
-
-    <ng-container [nbTreeGridColumnDef]="'actions'">
-      <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
-        Acciones
-      </th>
-      <td nbTreeGridCell *nbTreeGridCellDef="let row">
-        <button nbButton ghost status="primary" (click)="editTemplate(row.data)">
-          <nb-icon icon="edit-outline"></nb-icon>
-        </button>
-        <button nbButton ghost status="danger" (click)="deleteTemplate(row.data)">
-          <nb-icon icon="trash-outline"></nb-icon>
-        </button>
-      </td>
-    </ng-container>
-  </table>
-</nb-card-body>
+      <ng-container [nbTreeGridColumnDef]="'actions'">
+        <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>Acciones</th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          <button
+            nbButton
+            ghost
+            status="primary"
+            (click)="editTemplate(row.data)"
+          >
+            <nb-icon icon="edit-outline"></nb-icon>
+          </button>
+          <button
+            nbButton
+            ghost
+            status="danger"
+            (click)="deleteTemplate(row.data)"
+          >
+            <nb-icon icon="trash-outline"></nb-icon>
+          </button>
+        </td>
+      </ng-container>
+    </table>
+    }
+  </nb-card-body>
+</nb-card>

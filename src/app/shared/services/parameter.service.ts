@@ -14,12 +14,11 @@ export class ParameterService {
   parameter: Observable<CertificateField[]> = this._parameters.asObservable();
 
   constructor(private _http: HttpClient) {
-    this.getParameters();
   }
 
-  getParameters(): Observable<CertificateField[]> {
+  getParametersByCertificateType(certificateTypeId: number): Observable<CertificateField[]> {
      return this._http.get<CertificateField[]>(
-      `${this._API_URL}/api/certificate/parameter`)
+      `${this._API_URL}/api/certificate/parameter/certificate-type/`+certificateTypeId)
        .pipe(
          tap((parameters: CertificateField[]) => {
          this._parameters.next(parameters)
@@ -30,24 +29,12 @@ export class ParameterService {
     return this._http.post<CertificateField>(
       `${this._API_URL}/api/certificate/parameter`,
       params
-    ).pipe(
-      tap((parameter: CertificateField) => {
-        if (parameter && parameter.id) {
-          this.getParameters();
-        }
-      }),
     );
   }
 
   removeParameter(paramId: number): Observable<CertificateField> {
     return this._http.delete<CertificateField>(
       `${this._API_URL}/api/certificate/parameter/${paramId}`
-    ).pipe(
-      tap((parameter: CertificateField) => {
-        if (parameter && parameter.id) {
-          this.getParameters();
-        }
-      }),
     );
   }
 
@@ -60,12 +47,6 @@ export class ParameterService {
       params
     ).pipe(
       tap({
-        next: (parameter: CertificateField) => {
-          console.log('Respuesta del servidor (PUT):', parameter);
-          if (parameter && parameter.id) {
-            this.getParameters();
-          }
-        },
         error: (error) => {
           console.error('Error en la petición PUT:', error);
         }

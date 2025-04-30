@@ -55,20 +55,25 @@ export class SidebarFixedComponent implements OnInit {
       expanded: true,
       children: [
         {
-          title: 'Plantillas',
-          icon: 'code',
-          link: '/plantillas',
+          title: 'Tipos de Certificados',
+          icon: 'settings-outline',
+          link: '/tipos',
         },
         {
-          title: 'Administrar Parámetros',
+          title: 'Parámetros',
           icon: 'settings-outline',
           link: '/parametros',
         },
         {
-          title: 'Administrar Variables',
+          title: 'Variables',
           icon: 'settings-outline',
           link: '/variables',
-        }
+        },
+        {
+          title: 'Plantillas',
+          icon: 'code',
+          link: '/plantillas',
+        },
       ],
     },
   ];

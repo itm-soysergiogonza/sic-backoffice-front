@@ -5,56 +5,50 @@ import { Template } from '@shared/models/interfaces/template.interface';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TemplateService {
   private _API_URL: string = environment.API_URL;
-  private _template: BehaviorSubject<Template[]> = new BehaviorSubject<Template[]>([]);
+  private _template: BehaviorSubject<Template[]> = new BehaviorSubject<
+    Template[]
+  >([]);
 
   constructor(private _http: HttpClient) {}
-
 
   createTemplate(params: Partial<Template>): Observable<Template> {
     return this._http.post<Template>(
       `${this._API_URL}/api/certificate/template`,
       params
-    ).pipe(
-      tap((parameter: Template) => {
-        if (parameter && parameter.id) {
-          this.getTemplates();
-        }
-      }),
     );
   }
 
   getTemplates(): Observable<Template[]> {
-    return this._http.get<Template[]>(`${this._API_URL}/api/certificate/template`)
-      .pipe(
-        tap((templates: Template[] )=> this._template.next(templates))
+    return this._http
+      .get<Template[]>(`${this._API_URL}/api/certificate/template`)
+      .pipe(tap((templates: Template[]) => this._template.next(templates)));
+  }
+
+  getTemplatesByCertificateType(
+    certificateTypeId: number
+  ): Observable<Template[]> {
+    return this._http
+      .get<Template[]>(
+        `${this._API_URL}/api/certificate/template/certificate-type/` +
+          certificateTypeId
       )
+      .pipe(tap((templates: Template[]) => this._template.next(templates)));
   }
 
   updateTemplate(id: number, params: Partial<Template>): Observable<Template> {
     return this._http.put<Template>(
       `${this._API_URL}/api/certificate/template/${id}`,
       params
-    ).pipe(
-      tap((template: Template) => {
-        if (template && template.id) {
-          this.getTemplates();
-        }
-      }),
     );
   }
 
   removeTemplate(id: number): Observable<Template> {
-    return this._http.delete<Template>(`${this._API_URL}/api/certificate/template/${id}`)
-      .pipe(
-        tap((template: Template) => {
-          if (template && template.id) {
-            this.getTemplates();
-          }
-        }),
-      );
+    return this._http.delete<Template>(
+      `${this._API_URL}/api/certificate/template/${id}`
+    );
   }
 }

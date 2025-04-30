@@ -1,5 +1,11 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+  RequiredValidator,
+  Validators,
+} from '@angular/forms';
 import {
   NbCardModule,
   NbInputModule,
@@ -13,12 +19,16 @@ import {
   NbDialogService,
   NbSelectModule,
 } from '@nebular/theme';
-import { CertificateField, CertificateType } from '@shared/models/interfaces/certificate.interface';
+import {
+  CertificateField,
+  CertificateType,
+} from '@shared/models/interfaces/certificate.interface';
 import { ParameterService } from '@shared/services/parameter.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, EMPTY } from 'rxjs';
 import { ParameterModalComponent } from '../parameter-modal/parameter-modal.component';
 import { CertificatesService } from '@shared/services/certificates.service';
+import { FormUtils } from '@shared/utils/form-utils';
 
 interface TreeNode<T> {
   data: T;
@@ -38,20 +48,29 @@ interface TreeNode<T> {
     NbButtonModule,
     NbIconModule,
     NbSelectModule,
-    FormsModule
-  ]
+    FormsModule,
+    ReactiveFormsModule,
+  ],
 })
 export class NbTableComponent implements OnInit {
   customColumn = 'label';
-  defaultColumns = ['name', 'type', 'required', 'placeholder', 'certificateType', 'actions'];
+  defaultColumns = [
+    'name',
+    'type',
+    'required',
+    'placeholder',
+    'certificateType',
+    'actions',
+  ];
   allColumns = [this.customColumn, ...this.defaultColumns];
+  certificateType = new FormControl(0, [Validators.required]);
 
   dataSource: NbTreeGridDataSource<CertificateField>;
   parameters: CertificateField[] = [];
   certificateTypes: CertificateType[] = [];
-  selectedCertificateType: string = '';
 
   private _destroyRef = inject(DestroyRef);
+  public isLoadingCertificateTypes = false;
 
   sortColumn = '';
   sortDirection: NbSortDirection = NbSortDirection.NONE;
@@ -60,14 +79,13 @@ export class NbTableComponent implements OnInit {
     private _dataSourceBuilder: NbTreeGridDataSourceBuilder<CertificateField>,
     private _parametersService: ParameterService,
     private _dialogService: NbDialogService,
-    private _certificatesService: CertificatesService,
+    private _certificatesService: CertificatesService
   ) {
     this.dataSource = this._dataSourceBuilder.create([]);
   }
 
   ngOnInit(): void {
     this.loadCertificateTypes();
-    this.loadParameters();
   }
 
   loadCertificateTypes(): void {
@@ -82,14 +100,15 @@ export class NbTableComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al cargar los tipos de certificados:', error);
-        }
+        },
       });
 
     this._certificatesService.getCertificateTypes();
   }
 
-  loadParameters() {
-    this._parametersService.getParameters()
+  loadParameters(certificateTypeId: number) {
+    this._parametersService
+      .getParametersByCertificateType(certificateTypeId)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (parameters: CertificateField[]) => {
@@ -103,30 +122,23 @@ export class NbTableComponent implements OnInit {
         error: (error: Error) => {
           console.error('Error loading parameters:', error);
         },
-      })
+      });
   }
 
   filterParameters(): void {
     let filteredParameters = [...this.parameters];
-    if (this.selectedCertificateType) {
-      filteredParameters = this.parameters.filter(
-        param => param.certificateTypeId === Number(this.selectedCertificateType)
-      );
-    }
     this.updateDataSource(filteredParameters);
   }
 
-  onCertificateTypeChange(value: string): void {
-    console.log('Tipo de certificado seleccionado:', value);
-    this.selectedCertificateType = value;
-    this.filterParameters();
+  onCertificateTypeChange(value: number): void {
+    this.loadParameters(value);
   }
 
   updateDataSource(parameters: CertificateField[]): void {
     const treeData: TreeNode<CertificateField>[] = parameters.map((param) => ({
       data: param,
       expanded: false,
-      children: []
+      children: [],
     }));
 
     this.dataSource.setData(treeData);
@@ -156,15 +168,18 @@ export class NbTableComponent implements OnInit {
 
   deleteParameter(parameter: CertificateField): void {
     if (confirm('¿Está seguro que desea eliminar este parámetro?')) {
-      this._parametersService.removeParameter(parameter.id)
+      this._parametersService
+        .removeParameter(parameter.id)
         .pipe(takeUntilDestroyed(this._destroyRef))
         .subscribe({
           next: () => {
-            this.loadParameters();
+            this.loadParameters(
+              this.certificateType.value ? this.certificateType.value : 0
+            );
           },
           error: (error) => {
             console.error('Error deleting parameter:', error);
-          }
+          },
         });
     }
   }
@@ -197,16 +212,20 @@ export class NbTableComponent implements OnInit {
     dialogRef.onClose
       .pipe(
         takeUntilDestroyed(this._destroyRef),
-        catchError(error => {
+        catchError((error) => {
           console.error('Error al abrir el modal de edición:', error);
           return EMPTY;
         })
       )
       .subscribe((result) => {
         if (result) {
-          this.loadParameters();
+          this.loadParameters(
+            this.certificateType.value ? this.certificateType.value : 0
+          );
         }
       });
   }
+  public isInvalid(): boolean {
+    return this.certificateType.invalid;
+  }
 }
-

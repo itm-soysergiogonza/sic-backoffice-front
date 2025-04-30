@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import {
@@ -17,6 +17,7 @@ import {
     NbSidebarModule,
     NbButtonModule,
     NbIconModule,
+    FormsModule,
     ReactiveFormsModule
   ],
   templateUrl: './app.component.html',

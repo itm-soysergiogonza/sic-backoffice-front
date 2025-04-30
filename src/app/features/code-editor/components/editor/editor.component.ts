@@ -278,7 +278,7 @@ export class EditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._parametersService.getParameters().subscribe({
+    this._parametersService.getParametersByCertificateType(1).subscribe({
       next: (parameters: Parameter[]) => {
         this.parameters = parameters;
       },
