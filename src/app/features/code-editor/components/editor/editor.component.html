@@ -27,6 +27,31 @@
       </ngs-code-editor>
     </div>
 
+    <div class="parameters-pane" *ngIf="showParameters">
+      <div class="parameters-header">
+        <h3>Parámetros Disponibles</h3>
+      </div>
+      <div class="parameters-content">
+        <nb-accordion>
+          <nb-accordion-item *ngFor="let param of parameters">
+            <nb-accordion-item-header>
+              {{ param.label }}
+            </nb-accordion-item-header>
+            <nb-accordion-item-body>
+              <div class="parameter-details">
+                <p><strong>Tipo:</strong> {{ param.type }}</p>
+                <p><strong>Requerido:</strong> {{ param.required ? 'Sí' : 'No' }}</p>
+                <p *ngIf="param.placeholder"><strong>Placeholder:</strong> {{ param.placeholder }}</p>
+                <button nbButton size="small" (click)="insertParameter(param.name)">
+                  Insertar
+                </button>
+              </div>
+            </nb-accordion-item-body>
+          </nb-accordion-item>
+        </nb-accordion>
+      </div>
+    </div>
+
     <div class="preview-pane">
       <div class="preview-header">
         <h3>Vista Previa</h3>

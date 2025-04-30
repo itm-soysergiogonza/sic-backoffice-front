@@ -12,6 +12,7 @@ import {
   NbLayoutModule,
   NbOptionModule,
   NbSelectModule,
+  NbTooltipModule,
 } from '@nebular/theme';
 import { CodeModel } from '@ngstack/code-editor';
 import { CodeEditorModule } from '@ngstack/code-editor';
@@ -47,12 +48,15 @@ interface TemplateParameter {
     NbIconModule,
     NbButtonModule,
     NbEvaIconsModule,
+    NbTooltipModule,
   ],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss',
 })
 export class EditorComponent implements OnInit {
   @Input() templateId?: number;
+  @Input() certificateTypeId?: number;
+  @Input() parameters: Parameter[] = [];
   @Output() contentChange = new EventEmitter<string>();
 
   theme = 'vs-dark';
@@ -85,8 +89,6 @@ export class EditorComponent implements OnInit {
     automaticLayout: true,
   };
 
-  parameters: Parameter[] = [];
-
   constructor(
     private sanitizer: DomSanitizer,
     private _parametersService: ParameterService,
@@ -96,10 +98,15 @@ export class EditorComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('Certificate Type ID:', this.certificateTypeId);
     if (this.templateId) {
       this.loadTemplate();
     } else {
       this.loadBaseTemplate();
+    }
+
+    if (this.certificateTypeId) {
+      this.loadParameters();
     }
   }
 
@@ -145,6 +152,21 @@ export class EditorComponent implements OnInit {
     }
   }
 
+  loadParameters() {
+    if (this.certificateTypeId) {
+      console.log('Loading parameters for certificate type:', this.certificateTypeId);
+      this._editorService.getParametersByCertificateType(this.certificateTypeId).subscribe({
+        next: (parameters) => {
+          console.log('Parameters loaded:', parameters);
+          this.parameters = parameters;
+        },
+        error: (error) => {
+          console.error('Error loading parameters:', error);
+        }
+      });
+    }
+  }
+
   onLanguageChange(language: LanguageType): void {
     this.selectedLanguage = language;
     this.model = {
@@ -167,11 +189,24 @@ export class EditorComponent implements OnInit {
 
   toggleParameters(): void {
     this.showParameters = !this.showParameters;
+    console.log('Parameters visibility:', this.showParameters);
+    console.log('Current parameters:', this.parameters);
   }
 
   insertParameter(paramName: string): void {
     if (this.selectedLanguage === 'html') {
-      console.log('Insertar parámetro:', paramName);
+      const currentValue = this.model.value;
+      const cursorPosition = this.model.value.length;
+      const parameterTag = `{{${paramName}}}`;
+      
+      this.model = {
+        ...this.model,
+        value: currentValue.slice(0, cursorPosition) + parameterTag + currentValue.slice(cursorPosition)
+      };
+      
+      this.htmlContent = this.model.value;
+      this.updatePreview();
+      this.contentChange.emit(this.htmlContent);
     }
   }
 

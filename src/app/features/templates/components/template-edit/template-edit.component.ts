@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { CertificateType } from '@shared/models/interfaces/certificate.interface';
+import { CertificateType, CertificateField } from '@shared/models/interfaces/certificate.interface';
 import { EditorComponent } from '@features/code-editor/components/editor/editor.component';
-import { NbBadgeModule, NbButtonModule, NbCardModule, NbIconModule, NbInputModule, NbFormFieldModule, NbSelectModule, NbToastrService } from '@nebular/theme';
+import { NbBadgeModule, NbButtonModule, NbCardModule, NbIconModule, NbInputModule, NbFormFieldModule, NbSelectModule, NbToastrService, NbAccordionModule, NbTooltipModule } from '@nebular/theme';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EditorService, Template, CreateTemplateDTO } from '@features/code-editor/services/editor.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CertificatesService } from '@shared/services/certificates.service';
+import { ParameterService } from '@shared/services/parameter.service';
 
 interface TemplateForm {
   certificateTypeId: number;
@@ -26,6 +27,8 @@ interface TemplateForm {
     NbInputModule,
     NbFormFieldModule,
     NbSelectModule,
+    NbAccordionModule,
+    NbTooltipModule,
     ReactiveFormsModule
   ],
   templateUrl: './template-edit.component.html',
@@ -37,18 +40,29 @@ export class TemplateEditComponent implements OnInit, OnChanges {
   templateForm: FormGroup;
   isSaving = false;
   certificateTypes: CertificateType[] = [];
+  parameters: CertificateField[] = [];
+  showParameters = false;
 
   constructor(
     private fb: FormBuilder,
     private _editorService: EditorService,
     private _toastrService: NbToastrService,
     private _router: Router,
-    private _certificatesService: CertificatesService
+    private _route: ActivatedRoute,
+    private _certificatesService: CertificatesService,
+    private _parameterService: ParameterService
   ) {
     this.templateForm = this.fb.group({
       certificateTypeId: [null, Validators.required],
       name: ['', [Validators.required, Validators.minLength(3)]],
       content: ['', Validators.required]
+    });
+
+    // Subscribe to certificateTypeId changes to load parameters
+    this.templateForm.get('certificateTypeId')?.valueChanges.subscribe(certificateTypeId => {
+      if (certificateTypeId) {
+        this.loadParameters(certificateTypeId);
+      }
     });
 
     // Subscribe to form changes to debug
@@ -107,6 +121,28 @@ export class TemplateEditComponent implements OnInit, OnChanges {
     }
   }
 
+  loadParameters(certificateTypeId: number) {
+    this._parameterService.getParametersByCertificateType(certificateTypeId).subscribe({
+      next: (parameters: CertificateField[]) => {
+        this.parameters = parameters;
+      },
+      error: (error) => {
+        console.error('Error loading parameters:', error);
+        this._toastrService.danger('Error al cargar los parámetros', 'Error');
+      }
+    });
+  }
+
+  toggleParameters() {
+    this.showParameters = !this.showParameters;
+  }
+
+  insertParameter(parameter: CertificateField) {
+    const parameterTag = `\${${parameter.name}}`;
+    // Emit to editor component
+    this.onEditorContentChange(this.templateForm.get('content')?.value + parameterTag);
+  }
+
   saveTemplate() {
     if (this.templateForm.valid) {
       this.isSaving = true;
@@ -127,7 +163,7 @@ export class TemplateEditComponent implements OnInit, OnChanges {
       this._editorService.saveTemplate(templateData).subscribe({
         next: (template: Template) => {
           this._toastrService.success('Template guardado exitosamente', 'Éxito');
-          this.templateId = template.id;
+          this._router.navigate(['/plantillas', template.id, 'editar']);
           this.isSaving = false;
         },
         error: (error) => {

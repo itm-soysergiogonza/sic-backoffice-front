@@ -15,41 +15,71 @@
     </div>
   </nb-card-header>
   <nb-card-body>
-    <form [formGroup]="templateForm" class="template-form">
-      <div class="form-group">
-        <nb-form-field>
-          <input
-            nbInput
-            fullWidth
-            formControlName="name"
-            placeholder="Nombre del template"
-            [status]="templateForm.get('name')?.invalid && templateForm.get('name')?.touched ? 'danger' : 'basic'"
-            [disabled]="isSaving"
-          >
-          <nb-icon nbPrefix icon="file-text-outline"></nb-icon>
-        </nb-form-field>
-        <small class="text-danger" *ngIf="templateForm.get('name')?.invalid && templateForm.get('name')?.touched">
-          El nombre es requerido y debe tener al menos 3 caracteres
-        </small>
-      </div>
-      <div class="form-group">
-        <nb-form-field>
-          <nb-select
-            fullWidth
-            formControlName="certificateTypeId"
-            placeholder="Tipo de certificado"
-            [status]="templateForm.get('certificateTypeId')?.invalid && templateForm.get('certificateTypeId')?.touched ? 'danger' : 'basic'"
-            [disabled]="isSaving"
-          >
-            <nb-option *ngFor="let type of certificateTypes" [value]="type.id">{{ type.name }}</nb-option>
-          </nb-select>
-          <nb-icon nbPrefix icon="file-text-outline"></nb-icon>
-        </nb-form-field>
-        <small class="text-danger" *ngIf="templateForm.get('certificateTypeId')?.invalid && templateForm.get('certificateTypeId')?.touched">
-          El tipo de certificado es requerido
-        </small>
-      </div>
-      <app-editor [templateId]="templateId" (contentChange)="onEditorContentChange($event)"></app-editor>
-    </form>
+    <div class="editor-container">
+      <form [formGroup]="templateForm" class="template-form">
+        <div class="form-group">
+          <nb-form-field>
+            <input
+              nbInput
+              fullWidth
+              formControlName="name"
+              placeholder="Nombre del template"
+              [status]="templateForm.get('name')?.invalid && templateForm.get('name')?.touched ? 'danger' : 'basic'"
+              [disabled]="isSaving"
+            >
+            <nb-icon nbPrefix icon="file-text-outline"></nb-icon>
+          </nb-form-field>
+          <small class="text-danger" *ngIf="templateForm.get('name')?.invalid && templateForm.get('name')?.touched">
+            El nombre es requerido y debe tener al menos 3 caracteres
+          </small>
+        </div>
+        <div class="form-group">
+          <nb-form-field>
+            <nb-select
+              fullWidth
+              formControlName="certificateTypeId"
+              placeholder="Tipo de certificado"
+              [status]="templateForm.get('certificateTypeId')?.invalid && templateForm.get('certificateTypeId')?.touched ? 'danger' : 'basic'"
+              [disabled]="isSaving"
+            >
+              <nb-option *ngFor="let type of certificateTypes" [value]="type.id">{{ type.name }}</nb-option>
+            </nb-select>
+            <nb-icon nbPrefix icon="file-text-outline"></nb-icon>
+          </nb-form-field>
+          <small class="text-danger" *ngIf="templateForm.get('certificateTypeId')?.invalid && templateForm.get('certificateTypeId')?.touched">
+            El tipo de certificado es requerido
+          </small>
+        </div>
+      </form>
+  <ng-container *ngIf="templateForm.get('certificateTypeId')?.value">
+        <div class="parameters-section" *ngIf="showParameters">
+          <nb-accordion>
+            <nb-accordion-item>
+              <nb-accordion-item-header>
+                Parámetros Disponibles
+              </nb-accordion-item-header>
+              <nb-accordion-item-body>
+                <div class="parameters-list">
+                  <button
+                    nbButton
+                    ghost
+                    *ngFor="let param of parameters"
+                    (click)="insertParameter(param)"
+                    [nbTooltip]="param.label"
+                  >
+                    ${{'{'}}{{param.name}}{{'}}'}}
+                  </button>
+                </div>
+              </nb-accordion-item-body>
+            </nb-accordion-item>
+          </nb-accordion>
+        </div>
+    <app-editor 
+      [templateId]="templateId" 
+      [certificateTypeId]="templateForm.get('certificateTypeId')?.value"
+      (contentChange)="onEditorContentChange($event)">
+    </app-editor>
+    </ng-container>
+    </div>
   </nb-card-body>
 </nb-card>
