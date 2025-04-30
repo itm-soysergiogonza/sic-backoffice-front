@@ -1,0 +1,53 @@
+.template-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .form-group {
+    margin-bottom: 1rem;
+    width: 100%;
+
+    nb-form-field {
+      width: 100%;
+    }
+  }
+
+  .text-danger {
+    color: #ff3d71;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.create-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.parameters-section {
+  margin-bottom: 1rem;
+
+  .parameters-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    button {
+      font-family: monospace;
+    }
+  }
+}

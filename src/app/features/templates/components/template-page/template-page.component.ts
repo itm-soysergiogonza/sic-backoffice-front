@@ -90,41 +90,7 @@ export class TemplatePageComponent implements OnInit, OnDestroy {
     );
   }
 
-
-
-  /*openTemplateModal(): void {
-    this._dialogService.open(TemplateModalComponent, {
-      context: {
-        certificateTypes: this.certificateTypes,
-        isEditMode: false,
-        modalTitle: 'Crear Nueva Plantilla',
-      },
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-    })
-      .onClose.subscribe((newTemplate: Template | null) => {
-        if (newTemplate) {
-          this._templateService.getTemplates()
-            .pipe(takeUntil(this._destroy$))
-            .subscribe({
-              next: (templates: Template[]) => {
-                if (this.nbTableComponent) {
-                  this.nbTableComponent.templates = templates;
-                  this.nbTableComponent.updateDataSource(templates);
-                }
-              },
-              error: (error) => {
-                console.error('Error refreshing templates:', error);
-              }
-            });
-        }
-      });
-  }*/
-
   createTemplate(): void {
-    const temporalId = `temp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    this._router.navigate([`plantillas/${temporalId}/editar`], {
-      state: { tempTemplateId: temporalId }
-    });
+    this._router.navigate([`plantillas/crear`]);
   }
 }
