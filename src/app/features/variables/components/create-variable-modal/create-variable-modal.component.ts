@@ -5,6 +5,7 @@ import {NbButtonModule, NbCardModule, NbDialogRef, NbInputModule, NbOptionModule
 import { CertificateField, CertificateType } from '@shared/models/interfaces/certificate.interface';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { CommonModule } from '@angular/common';
+import { Variable } from '@shared/models/interfaces/variables.interface';
 
 @Component({
   selector: 'app-create-variable-modal',
@@ -15,7 +16,9 @@ import { CommonModule } from '@angular/common';
 export class CreateVariableModalComponent {
   variableForm: FormGroup;
   certificateTypes: CertificateType[] = [];
-  private  _destroyRef = inject(DestroyRef);
+  private _destroyRef = inject(DestroyRef);
+  isEditMode = false;
+  currentVariable: Variable | null = null;
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -52,9 +55,27 @@ export class CreateVariableModalComponent {
    this._certificatesService.getCertificateTypes();
  }
 
+  initialize(variable: Variable, isEdit: boolean = false): void {
+    this.isEditMode = isEdit;
+    this.currentVariable = variable;
+    
+    if (isEdit && variable) {
+      this.variableForm.patchValue({
+        certificateTypeId: variable.certificateTypeId,
+        context: variable.context,
+        sql: variable.sql,
+        list: variable.list
+      });
+    }
+  }
+
   submit() {
     if (this.variableForm.valid) {
-      this._dialogRef.close(this.variableForm.value)
+      const formData = this.variableForm.value;
+      if (this.isEditMode && this.currentVariable) {
+        formData.id = this.currentVariable.id;
+      }
+      this._dialogRef.close(formData);
     }
   }
 

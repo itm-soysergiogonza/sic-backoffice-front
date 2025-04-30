@@ -79,8 +79,7 @@ export class ParametersPageComponent implements OnInit {
       closeOnBackdropClick: false,
       closeOnEsc: false,
     })
-      .onClose
-      .subscribe((newParameter: CertificateField | null) => {
+      .onClose.subscribe((newParameter: CertificateField | null) => {
         if (newParameter) {
           this.nbTableComponent.parameters.push(newParameter);
           this.nbTableComponent.updateDataSource(this.nbTableComponent.parameters);

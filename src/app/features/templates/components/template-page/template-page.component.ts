@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import {
@@ -14,8 +14,11 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { CertificateType } from '@shared/models/interfaces/certificate.interface';
-import { CreateCertificateModalComponent } from '../create-certificate-modal/create-certificate-modal.component';
 import { NbTableTemplateComponent } from '../nb-table-template/nb-table-template.component';
+import { TemplateModalComponent } from '../template-modal/template-modal.component';
+import { Template } from '@shared/models/interfaces/template.interface';
+import { NbTableComponent } from '@features/parameters/components/nb-table/nb-table.component';
+import { TemplateService } from '@shared/services/template.service';
 
 @Component({
   selector: 'app-template-page',
@@ -34,8 +37,8 @@ import { NbTableTemplateComponent } from '../nb-table-template/nb-table-template
   styleUrl: './template-page.component.scss',
 })
 export class TemplatePageComponent implements OnInit, OnDestroy {
+  @ViewChild(NbTableTemplateComponent) nbTableComponent!: NbTableTemplateComponent;
   certificateTypes: CertificateType[] = [];
-  searchTerm = '';
   filteredCertificates: CertificateType[] = [];
   private _destroy$: Subject<void> = new Subject<void>();
 
@@ -43,11 +46,12 @@ export class TemplatePageComponent implements OnInit, OnDestroy {
     private _certificateService: CertificatesService,
     private _searchService: NbSearchService,
     private _dialogService: NbDialogService,
+    private _templateService: TemplateService,
   ) {}
 
   ngOnInit(): void {
     this._certificateService.getCertificateTypes();
-    this._setupSearch();
+    // this._setupSearch();
 
     this._certificateService.certificateType
       .pipe(takeUntil(this._destroy$))
@@ -69,23 +73,6 @@ export class TemplatePageComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  private _setupSearch(): void {
-    this._searchService
-      .onSearchInput()
-      .pipe(takeUntil(this._destroy$))
-      .subscribe(({ term }) => {
-        this.searchTerm = term;
-        this._filterCertificates(term);
-      });
-
-    this._searchService
-      .onSearchSubmit()
-      .pipe(takeUntil(this._destroy$))
-      .subscribe(({ term }) => {
-        this.searchTerm = term;
-        this._filterCertificates(term);
-      });
-  }
 
   private _filterCertificates(term: string): void {
     const searchTerm = term.toLowerCase().trim();
@@ -101,23 +88,31 @@ export class TemplatePageComponent implements OnInit, OnDestroy {
     );
   }
 
-  clearSearch(): void {
-    this.searchTerm = '';
-    this.filteredCertificates = this.certificateTypes;
-  }
 
-  createCertificate(): void {
-    this._dialogService.open(CreateCertificateModalComponent)
-      .onClose.subscribe(result => {
-        if (result) {
-          this._certificateService.createCertificateType(result)
+
+  openTemplateModal(): void {
+    this._dialogService.open(TemplateModalComponent, {
+      context: {
+        certificateTypes: this.certificateTypes,
+        isEditMode: false,
+        modalTitle: 'Crear Nueva Plantilla',
+      },
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+    })
+      .onClose.subscribe((newTemplate: Template | null) => {
+        if (newTemplate) {
+          this._templateService.getTemplates()
             .pipe(takeUntil(this._destroy$))
             .subscribe({
-              next: () => {
-                this._certificateService.getCertificateTypes();
+              next: (templates: Template[]) => {
+                if (this.nbTableComponent) {
+                  this.nbTableComponent.templates = templates;
+                  this.nbTableComponent.updateDataSource(templates);
+                }
               },
-              error: (error: Error) => {
-                console.error('Error al crear el certificado:', error);
+              error: (error) => {
+                console.error('Error refreshing templates:', error);
               }
             });
         }

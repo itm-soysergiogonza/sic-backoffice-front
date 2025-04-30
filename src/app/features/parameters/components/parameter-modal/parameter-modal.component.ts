@@ -3,7 +3,7 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NbButtonModule, NbCardModule, NbDialogRef, NbInputModule, NbSelectModule, NbToastrService, NbDialogService, NbIconModule } from '@nebular/theme';
 import { CommonModule } from '@angular/common';
 import { ParameterService } from '@shared/services/parameter.service';
-import { CertificateField, FieldType, CertificateType } from '@shared/models/interfaces/certificate.interface';
+import { CertificateField, CertificateType } from '@shared/models/interfaces/certificate.interface';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { FormHandlerService } from '@shared/services/form-handler.service';
 import { NotificationToastService } from '@shared/services/notification-toast-service.service';
@@ -67,7 +67,7 @@ export class ParameterModalComponent implements OnInit {
     console.log('3. Inicializando modal con parámetro:', parameter);
     this.isEditMode = isEdit;
     this.modalTitle = isEdit ? 'Editar Parámetro' : 'Crear Nuevo Parámetro';
-    
+
     if (parameter) {
       console.log('4. Configurando parámetro para edición');
       this.parameterToEdit = { ...parameter };
@@ -137,14 +137,10 @@ export class ParameterModalComponent implements OnInit {
     const formValue = this.parameterForm.getRawValue();
     const parameterData: Partial<CertificateField> = this._buildParameterData(formValue);
 
-    console.log('Modo actual:', this.isEditMode ? 'EDICIÓN' : 'CREACIÓN');
-    console.log('ID del parámetro a editar:', this.parameterToEdit?.id);
-    console.log('Datos a enviar:', parameterData);
-
     if (this.isEditMode && this.parameterToEdit?.id) {
       parameterData.id = this.parameterToEdit.id;
       console.log('Actualizando parámetro existente con ID:', this.parameterToEdit.id);
-      
+
       this._parameterService.updateParameter(this.parameterToEdit.id, parameterData)
         .pipe(takeUntilDestroyed(this._destroyRef))
         .subscribe({
@@ -186,7 +182,7 @@ export class ParameterModalComponent implements OnInit {
 
   private _buildParameterData(formValue: any): Partial<CertificateField> {
     let options: any[] | undefined;
-    
+
     if (formValue.options) {
       try {
         options = JSON.parse(formValue.options);

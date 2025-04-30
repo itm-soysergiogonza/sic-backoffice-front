@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ViewChild } from '@angular/core';
 import {NbButtonModule, NbCardModule, NbDialogService, NbIconModule } from '@nebular/theme';
 import { CreateVariableModalComponent } from '../create-variable-modal/create-variable-modal.component';
 import { VariablesService } from '@shared/services/variables.service';
@@ -12,6 +12,7 @@ import { NbTableVariableComponent } from '../nb-table-variable/nb-table-variable
   styleUrl: './variables-page.component.scss'
 })
 export class VariablesPageComponent {
+  @ViewChild(NbTableVariableComponent) tableComponent!: NbTableVariableComponent;
 
   private _destroyRef = inject(DestroyRef);
 
@@ -27,7 +28,7 @@ export class VariablesPageComponent {
             .pipe(takeUntilDestroyed(this._destroyRef))
             .subscribe({
               next: () => {
-                this._variableService.getVariables();
+                this.tableComponent.refreshTable();
               },
               error: (error: Error) => {
                 console.error('Error creating variable:', error);

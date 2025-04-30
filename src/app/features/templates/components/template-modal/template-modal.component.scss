@@ -22,19 +22,26 @@
 
 nb-card {
   min-width: 500px;
+  max-width: 800px;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 
   label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
+    color: var(--text-basic-color);
   }
 
-  input {
+  input, textarea, nb-select {
     width: 100%;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 150px;
   }
 }
 
@@ -43,4 +50,11 @@ nb-card-footer {
   justify-content: flex-end;
   gap: 1rem;
   padding: 1rem;
+  border-top: 1px solid var(--border-basic-color-3);
+}
+
+.error-message {
+  color: var(--text-danger-color);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }

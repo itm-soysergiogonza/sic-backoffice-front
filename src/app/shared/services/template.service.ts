@@ -13,11 +13,38 @@ export class TemplateService {
 
   constructor(private _http: HttpClient) {}
 
+
+  createTemplate(params: Partial<Template>): Observable<Template> {
+    return this._http.post<Template>(
+      `${this._API_URL}/api/certificate/template`,
+      params
+    ).pipe(
+      tap((parameter: Template) => {
+        if (parameter && parameter.id) {
+          this.getTemplates();
+        }
+      }),
+    );
+  }
+
   getTemplates(): Observable<Template[]> {
     return this._http.get<Template[]>(`${this._API_URL}/api/certificate/template`)
       .pipe(
         tap((templates: Template[] )=> this._template.next(templates))
       )
+  }
+
+  updateTemplate(id: number, params: Partial<Template>): Observable<Template> {
+    return this._http.put<Template>(
+      `${this._API_URL}/api/certificate/template/${id}`,
+      params
+    ).pipe(
+      tap((template: Template) => {
+        if (template && template.id) {
+          this.getTemplates();
+        }
+      }),
+    );
   }
 
   removeTemplate(id: number): Observable<Template> {

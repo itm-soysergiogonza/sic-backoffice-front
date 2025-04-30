@@ -18,6 +18,8 @@ import { CertificatesService } from '@shared/services/certificates.service';
 import { Template } from '@shared/models/interfaces/template.interface';
 import { Variable } from '@shared/models/interfaces/variables.interface';
 import { VariablesService } from '@shared/services/variables.service';
+import { CreateVariableModalComponent } from '../create-variable-modal/create-variable-modal.component';
+import {catchError, EMPTY } from 'rxjs';
 
 interface TreeNode<T> {
   data: T;
@@ -65,11 +67,11 @@ export class NbTableVariableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.loadCertificateTypes();
+    this.loadCertificateTypes();
     this.loadVariable();
   }
 
-  /*loadCertificateTypes(): void {
+  loadCertificateTypes(): void {
     this._certificatesService.certificateType
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
@@ -85,7 +87,7 @@ export class NbTableVariableComponent implements OnInit {
       });
 
     this._certificatesService.getCertificateTypes();
-  }*/
+  }
 
   loadVariable() {
     this._variableService.getVariables()
@@ -162,20 +164,20 @@ export class NbTableVariableComponent implements OnInit {
     }
   }
 
-  editParameter(parameter: Variable): void {
-    /*  if (!parameter) {
-        console.warn('No se recibió parámetro para editar');
+  editVariable(variable: Variable): void {
+      if (!variable) {
+        console.warn('No se recibió variable para editar');
         return;
       }
 
-      if (!parameter.id) {
-        console.warn('El parámetro no tiene ID:', parameter);
+      if (!variable.id) {
+        console.warn('La variable no tiene ID:', variable);
         return;
       }
 
-      const dialogRef = this._dialogService.open(ParameterModalComponent, {
+      const dialogRef = this._dialogService.open(CreateVariableModalComponent, {
         closeOnBackdropClick: false,
-        closeOnEsc: false,
+        closeOnEsc: true,
         hasBackdrop: true,
         hasScroll: false,
       });
@@ -183,7 +185,7 @@ export class NbTableVariableComponent implements OnInit {
       setTimeout(() => {
         const modalComponent = dialogRef.componentRef?.instance;
         if (modalComponent) {
-          modalComponent.initialize(parameter, true);
+          modalComponent.initialize(variable, true);
         }
       });
 
@@ -197,12 +199,10 @@ export class NbTableVariableComponent implements OnInit {
         )
         .subscribe((result) => {
           if (result) {
-            this.loadParameters();
+            this.loadVariable();
           }
         });
-    }*/
-  }
-
+    }
   refreshTable(): void {
     this.loadVariable();
   }

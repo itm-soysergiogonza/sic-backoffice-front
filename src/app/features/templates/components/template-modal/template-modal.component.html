@@ -1,0 +1,44 @@
+<nb-card>
+  <nb-card-header>
+    <h3>{{ modalTitle }}</h3>
+  </nb-card-header>
+  <nb-card-body>
+    <form [formGroup]="templateForm">
+      <div class="form-group">
+        <label for="name">Nombre de la Plantilla</label>
+        <input
+          id="name"
+          nbInput
+          formControlName="name"
+          placeholder="Ingrese el nombre de la plantilla"
+          fullWidth
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="certificateTypeId">Tipo de Certificado</label>
+        <nb-select fullWidth id="certificateTypeId" formControlName="certificateTypeId" placeholder="Seleccione un tipo de certificado">
+          <nb-option *ngFor="let type of certificateTypes" [value]="type.id">{{ type.name }}</nb-option>
+        </nb-select>
+      </div>
+
+      <div class="form-group">
+        <label for="content">Contenido de la Plantilla</label>
+        <textarea
+          id="content"
+          nbInput
+          formControlName="content"
+          placeholder="Ingrese el contenido de la plantilla"
+          fullWidth
+          rows="10"
+        ></textarea>
+      </div>
+    </form>
+  </nb-card-body>
+  <nb-card-footer>
+    <button nbButton status="basic" (click)="cancel()">Cancelar</button>
+    <button nbButton status="primary" (click)="saveTemplate()" [disabled]="!templateForm.valid || isSubmitting">
+      {{ isEditMode ? 'Actualizar' : 'Crear' }}
+    </button>
+  </nb-card-footer>
+</nb-card>
