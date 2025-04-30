@@ -1,0 +1,52 @@
+<nb-card>
+  <nb-card-header>
+    <h3>{{ modalTitle }}</h3>
+  </nb-card-header>
+
+  <nb-card-body>
+    <form [formGroup]="typeForm">
+      <div class="form-group">
+        <label for="name">Nombre</label>
+        <input
+          nbInput
+          fullWidth
+          id="name"
+          formControlName="name"
+          placeholder="Ej. Certificado de Ingreso"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="paid">¿Es de Pago?</label>
+        <nb-select fullWidth id="paid" formControlName="paid">
+          <nb-option [value]="true">Sí</nb-option>
+          <nb-option [value]="false">No</nb-option>
+        </nb-select>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Precio</label>
+        <input
+          type="number"
+          nbInput
+          fullWidth
+          id="price"
+          formControlName="price"
+          placeholder="Ej. 5000"
+        />
+      </div>
+    </form>
+  </nb-card-body>
+
+  <nb-card-footer>
+    <button nbButton status="basic" (click)="cancel()">Cancelar</button>
+    <button
+      nbButton
+      status="primary"
+      (click)="saveType()"
+      [disabled]="!typeForm.valid"
+    >
+      {{ isEditMode ? "Actualizar" : "Crear" }}
+    </button>
+  </nb-card-footer>
+</nb-card>

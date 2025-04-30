@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
-import { CertificateType, CertificateField } from '@shared/models/interfaces/certificate.interface';
+import {
+  CertificateType,
+  CertificateField,
+} from '@shared/models/interfaces/certificate.interface';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -9,42 +12,72 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 })
 export class CertificatesService {
   private readonly _API_URL: string = environment.API_URL;
-  private _certificateTypes: BehaviorSubject<CertificateType[]> = new BehaviorSubject<CertificateType[]>([]);
+  private _certificateTypes: BehaviorSubject<CertificateType[]> =
+    new BehaviorSubject<CertificateType[]>([]);
 
-  certificateType: Observable<CertificateType[]> = this._certificateTypes.asObservable();
+  certificateType: Observable<CertificateType[]> =
+    this._certificateTypes.asObservable();
 
   constructor(private http: HttpClient) {
     this.getCertificateTypes();
   }
 
   getCertificateTypes(): void {
-    this.http.get<CertificateType[]>(`${this._API_URL}/api/certificate/type`)
-      .pipe(
-        tap(types => this._certificateTypes.next(types))
-      )
+    this.http
+      .get<CertificateType[]>(`${this._API_URL}/api/certificate/type`)
+      .pipe(tap((types) => this._certificateTypes.next(types)))
       .subscribe({
-        error: (error) => console.error('Error loading certificate types:', error)
+        error: (error) =>
+          console.error('Error loading certificate types:', error),
       });
   }
 
   getAllParameters(): Observable<CertificateField[]> {
-    return this.http.get<CertificateField[]>(`${this._API_URL}/api/certificate/parameter`);
+    return this.http.get<CertificateField[]>(
+      `${this._API_URL}/api/certificate/parameter`
+    );
   }
 
-  getCertificateParametersByType(certificateTypeId: number): Observable<CertificateField[]> {
-    return this.http.get<CertificateField[]>(`${this._API_URL}/api/certificate/parameter?id=${certificateTypeId}`);
+  getCertificateParametersByType(
+    certificateTypeId: number
+  ): Observable<CertificateField[]> {
+    return this.http.get<CertificateField[]>(
+      `${this._API_URL}/api/certificate/parameter?id=${certificateTypeId}`
+    );
   }
 
-  assignParametersToCertificate(certificateTypeId: number, parameters: CertificateField[]): Observable<any> {
-    return this.http.post(`${this._API_URL}/api/certificate/${certificateTypeId}/parameters`, parameters);
+  assignParametersToCertificate(
+    certificateTypeId: number,
+    parameters: CertificateField[]
+  ): Observable<any> {
+    return this.http.post(
+      `${this._API_URL}/api/certificate/${certificateTypeId}/parameters`,
+      parameters
+    );
   }
 
-  unassignParametersFromCertificate(certificateTypeId: number, parameters: CertificateField[]): Observable<any> {
-    const parameterIds = parameters.map(p => p.id);
-    return this.http.delete(`${this._API_URL}/api/certificate/${certificateTypeId}/parameters`, { body: parameterIds });
+  deleteCertificateType(certificateTypeId: number): Observable<any> {
+    return this.http.delete(
+      `${this._API_URL}/api/certificate/type/${certificateTypeId}`
+    );
   }
 
-  createCertificateType(certificate: Partial<CertificateType>): Observable<CertificateType> {
-    return this.http.post<CertificateType>(`${this._API_URL}/api/certificate/type`, certificate);
+  createCertificateType(
+    certificate: Partial<CertificateType>
+  ): Observable<CertificateType> {
+    return this.http.post<CertificateType>(
+      `${this._API_URL}/api/certificate/type`,
+      certificate
+    );
+  }
+
+  updateCertificateType(
+    id: any,
+    certificate: Partial<CertificateType>
+  ): Observable<CertificateType> {
+    return this.http.put<CertificateType>(
+      `${this._API_URL}/api/certificate/type/` + id,
+      certificate
+    );
   }
 }
