@@ -1,9 +1,13 @@
 import { Routes } from '@angular/router';
-import { ParametersPageComponent } from '@features/parameters/components/parameters-page/parameters-page.component';
+import { CertificateTypeComponent } from './components/certificate-type/certificate-type.component';
 
-export const PARAMETERS_ROUTES: Routes = [
+export const TYPES_ROUTES: Routes = [
   {
     path: '',
-    component: ParametersPageComponent,
+    component: CertificateTypeComponent,
   },
+  {
+    path: '**',
+    redirectTo: '',
+  }
 ];

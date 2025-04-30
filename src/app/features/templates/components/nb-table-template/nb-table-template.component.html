@@ -68,40 +68,6 @@
         </td>
       </ng-container>
 
-      <ng-container [nbTreeGridColumnDef]="'content'">
-        <th
-          nbTreeGridHeaderCell
-          [nbSortHeader]="getSortDirection('content')"
-          *nbTreeGridHeaderCellDef
-        >
-          Content
-        </th>
-        <td nbTreeGridCell *nbTreeGridCellDef="let row">
-          {{ row.data.content || "-" }}
-        </td>
-      </ng-container>
-
-      <!--    <ng-container [nbTreeGridColumnDef]="'type'">-->
-      <!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('type')" *nbTreeGridHeaderCellDef>-->
-      <!--        Tipo-->
-      <!--      </th>-->
-      <!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.type || '-'}}</td>-->
-      <!--    </ng-container>-->
-
-      <!--    <ng-container [nbTreeGridColumnDef]="'required'">-->
-      <!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('required')" *nbTreeGridHeaderCellDef>-->
-      <!--        Requerido-->
-      <!--      </th>-->
-      <!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.required ? 'Sí' : 'No'}}</td>-->
-      <!--    </ng-container>-->
-
-      <!--    <ng-container [nbTreeGridColumnDef]="'placeholder'">-->
-      <!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('placeholder')" *nbTreeGridHeaderCellDef>-->
-      <!--       Placeholder-->
-      <!--      </th>-->
-      <!--      <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data.placeholder || '-'}}</td>-->
-      <!--    </ng-container>-->
-
       <ng-container [nbTreeGridColumnDef]="'actions'">
         <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>Acciones</th>
         <td nbTreeGridCell *nbTreeGridCellDef="let row">

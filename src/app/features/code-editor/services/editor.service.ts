@@ -37,4 +37,8 @@ export class EditorService {
   getParametersByCertificateType(certificateTypeId: number): Observable<Parameter[]> {
     return this._http.get<Parameter[]>(`${this._API_URL}/api/certificate/parameter/certificate-type/${certificateTypeId}`);
   }
+
+  updateTemplate(templateId: any, template: CreateTemplateDTO): Observable<Template> {
+    return this._http.put<Template>(`${this._API_URL}/api/certificate/template/${templateId}`, template);
+  }
 }

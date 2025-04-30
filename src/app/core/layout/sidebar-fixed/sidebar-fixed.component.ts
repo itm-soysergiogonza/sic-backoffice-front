@@ -57,7 +57,7 @@ export class SidebarFixedComponent implements OnInit {
         {
           title: 'Tipos de Certificados',
           icon: 'settings-outline',
-          link: '/tipos',
+          link: '/certificados',
         },
         {
           title: 'Parámetros',

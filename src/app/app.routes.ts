@@ -14,6 +14,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'certificados',
+        loadChildren: () =>
+          import('@features/types/types.routes').then(
+            (m): Routes => m.TYPES_ROUTES,
+          ),
+      },
+      {
         path: 'plantillas',
         loadChildren: () =>
           import('@features/templates/templates.routes').then(

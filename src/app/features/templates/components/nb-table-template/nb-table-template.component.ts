@@ -27,7 +27,7 @@ import { CertificatesService } from '@shared/services/certificates.service';
 import { TemplateService } from '@shared/services/template.service';
 import { Template } from '@shared/models/interfaces/template.interface';
 import { catchError, EMPTY } from 'rxjs';
-import { TemplateModalComponent } from '../template-modal/template-modal.component';
+import { Router } from '@angular/router';
 
 interface TreeNode<T> {
   data: T;
@@ -53,7 +53,7 @@ interface TreeNode<T> {
 })
 export class NbTableTemplateComponent implements OnInit {
   customColumn = 'name';
-  defaultColumns = ['content', 'actions'];
+  defaultColumns = ['actions'];
   allColumns = [this.customColumn, ...this.defaultColumns];
 
   dataSource: NbTreeGridDataSource<Template>;
@@ -73,7 +73,7 @@ export class NbTableTemplateComponent implements OnInit {
   constructor(
     private _dataSourceBuilder: NbTreeGridDataSourceBuilder<Template>,
     private _templatesService: TemplateService,
-    private _dialogService: NbDialogService,
+    private _router: Router,
     private _certificatesService: CertificatesService
   ) {
     this.dataSource = this._dataSourceBuilder.create([]);
@@ -84,6 +84,7 @@ export class NbTableTemplateComponent implements OnInit {
   }
 
   loadCertificateTypes(): void {
+    console.log('Iniciando carga de tipos de certificados');
     this._certificatesService.certificateType
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
@@ -91,6 +92,7 @@ export class NbTableTemplateComponent implements OnInit {
           console.log('Tipos de certificados recibidos:', types);
           if (Array.isArray(types)) {
             this.certificateTypes = types;
+            console.log('Tipos de certificados asignados:', this.certificateTypes);
           }
         },
         error: (error) => {
@@ -101,26 +103,26 @@ export class NbTableTemplateComponent implements OnInit {
     this._certificatesService.getCertificateTypes();
   }
   loadTemplates(certificateTypeId: number) {
+    console.log('Cargando plantillas para tipo de certificado:', certificateTypeId);
     this._templatesService
       .getTemplatesByCertificateType(certificateTypeId)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
-        next: (templates: Template[]) => {
-          console.log("here1")
-          if (Array.isArray(templates)) {
-            console.log("here2")
-
-            this.templates = templates;
-            this.filterTemplates();
-          }
+        next: (response: Template | Template[]) => {
+          console.log('Plantillas recibidas:', response);
+          // Convert single object to array if needed
+          this.templates = Array.isArray(response) ? response : [response];
+          console.log('Plantillas asignadas:', this.templates);
+          this.filterTemplates();
         },
         error: (error: Error) => {
-          console.error('Error loading parameters:', error);
+          console.error('Error cargando plantillas:', error);
         },
       });
   }
 
   filterTemplates(): void {
+    console.log('Filtrando plantillas...');
     let filteredTemplates: Template[] = [...this.templates];
     this.updateDataSource(filteredTemplates);
     console.log('Plantillas filtradas:', filteredTemplates);
@@ -194,35 +196,7 @@ export class NbTableTemplateComponent implements OnInit {
       return;
     }
 
-    const dialogRef = this._dialogService.open(TemplateModalComponent, {
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      hasBackdrop: true,
-      hasScroll: false,
-    });
-
-    setTimeout(() => {
-      const modalComponent = dialogRef.componentRef?.instance;
-      if (modalComponent) {
-        modalComponent.initialize(template, true);
-      }
-    });
-
-    dialogRef.onClose
-      .pipe(
-        takeUntilDestroyed(this._destroyRef),
-        catchError((error) => {
-          console.error('Error al abrir el modal de edición:', error);
-          return EMPTY;
-        })
-      )
-      .subscribe((result) => {
-        if (result) {
-          this.loadTemplates(
-            this.certificateType.value ? this.certificateType.value : 0
-          );
-        }
-      });
+    this._router.navigate(['/plantillas', template.id, 'editar']);
   }
 
   onCertificateTypeChange(value: number): void {
