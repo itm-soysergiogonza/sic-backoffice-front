@@ -18,6 +18,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CertificatesService } from '@shared/services/certificates.service';
 import { TemplateService } from '@shared/services/template.service';
 import { Template } from '@shared/models/interfaces/template.interface';
+import { catchError, EMPTY } from 'rxjs';
+import { TemplateModalComponent } from '../template-modal/template-modal.component';
 
 interface TreeNode<T> {
   data: T;
@@ -163,18 +165,18 @@ export class NbTableTemplateComponent implements OnInit {
     }
   }
 
-  editParameter(parameter: CertificateField): void {
-    /*  if (!parameter) {
+  editTemplate(template: Template): void {
+      if (!template) {
         console.warn('No se recibió parámetro para editar');
         return;
       }
 
-      if (!parameter.id) {
-        console.warn('El parámetro no tiene ID:', parameter);
+      if (!template.id) {
+        console.warn('La plantilla no tiene ID:', template);
         return;
       }
 
-      const dialogRef = this._dialogService.open(ParameterModalComponent, {
+      const dialogRef = this._dialogService.open(TemplateModalComponent, {
         closeOnBackdropClick: false,
         closeOnEsc: false,
         hasBackdrop: true,
@@ -184,7 +186,7 @@ export class NbTableTemplateComponent implements OnInit {
       setTimeout(() => {
         const modalComponent = dialogRef.componentRef?.instance;
         if (modalComponent) {
-          modalComponent.initialize(parameter, true);
+          modalComponent.initialize(template, true);
         }
       });
 
@@ -198,9 +200,8 @@ export class NbTableTemplateComponent implements OnInit {
         )
         .subscribe((result) => {
           if (result) {
-            this.loadParameters();
+            this.loadTemplates();
           }
         });
-    }*/
-  }
+    }
 }

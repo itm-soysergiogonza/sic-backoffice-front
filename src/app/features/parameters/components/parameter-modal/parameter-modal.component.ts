@@ -64,7 +64,6 @@ export class ParameterModalComponent implements OnInit {
   }
 
   initialize(parameter: CertificateField, isEdit: boolean = false): void {
-    console.log('3. Inicializando modal con parámetro:', parameter);
     this.isEditMode = isEdit;
     this.modalTitle = isEdit ? 'Editar Parámetro' : 'Crear Nuevo Parámetro';
 

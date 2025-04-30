@@ -72,15 +72,12 @@ export class TemplateModalComponent implements OnInit {
 
   initialize(template: Template, isEdit: boolean = false): void {
     this.isEditMode = isEdit;
-    this.templateToEdit = template;
     this.modalTitle = isEdit ? 'Editar Plantilla' : 'Crear Nueva Plantilla';
-    
-    if (isEdit && template) {
-      this.templateForm.patchValue({
-        name: template.name,
-        content: template.content,
-        certificateTypeId: template.certificateTypeId
-      });
+
+   if (template) {
+      console.log('4. Configurando parámetro para edición');
+      this.templateToEdit = { ...template };
+      this._initializeFormWithTemplate();
     }
   }
 
@@ -105,6 +102,23 @@ export class TemplateModalComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  private _initializeFormWithTemplate(): void {
+    if (!this.templateToEdit) {
+      console.warn('No hay parámetro para editar');
+      return;
+    }
+
+    const formValues = {
+      name: this.templateToEdit.name || '',
+      content: this.templateToEdit.content || '',
+      certificateTypeId: this.templateToEdit.id || this.templateToEdit.certificateTypeId
+    };
+
+    console.log('9. Valores preparados para el formulario:', formValues);
+    this.templateForm.patchValue(formValues);
+    console.log('10. Formulario actualizado. Nuevos valores:', this.templateForm.value);
   }
 
   public saveTemplate(): void {
