@@ -40,6 +40,13 @@ export const routes: Routes = [
           import('@features/variables/variables.routes').then(
             (m): Routes => m.VARIABLES_ROUTES,
           ),
+      },
+      {
+        path: 'perfil',
+        loadChildren: () =>
+          import('@features/profile/profile.routes').then(
+            (m): Routes => m.PROFILE_ROUTES,
+          ),
       }
     ],
   },

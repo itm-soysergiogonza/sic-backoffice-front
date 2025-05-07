@@ -1,0 +1,63 @@
+<nb-card>
+  <nb-card-header>
+    <h3>Subir Firma</h3>
+  </nb-card-header>
+  <nb-card-body>
+    <form [formGroup]="signatureForm" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <input
+          nbInput
+          fullWidth
+          id="description"
+          formControlName="description"
+          placeholder="Ingrese una descripción para la firma"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="substituteUser">Usuario Sustituto</label>
+        <nb-select
+          fullWidth
+          id="substituteUser"
+          formControlName="substituteUser"
+          placeholder="Seleccione un usuario sustituto"
+        >
+          @for (user of users; track user.id) {
+            <nb-option [value]="user.id">
+              {{ user.name }}
+            </nb-option>
+          }
+        </nb-select>
+      </div>
+
+      <div class="form-group">
+        <label>Firma</label>
+        <ngx-dropzone
+          (change)="onSelect($event)"
+          [multiple]="false"
+          accept="image/*"
+        >
+          <ngx-dropzone-label>
+            <div class="dropzone-content">
+              <nb-icon icon="upload-outline" pack="eva"></nb-icon>
+              <p>Arrastre su firma aquí o haga clic para seleccionar</p>
+            </div>
+          </ngx-dropzone-label>
+          <ngx-dropzone-preview *ngFor="let file of files" [removable]="true" (removed)="onRemove(file)">
+            <ngx-dropzone-label>{{ file.name }}</ngx-dropzone-label>
+          </ngx-dropzone-preview>
+        </ngx-dropzone>
+      </div>
+
+      <div class="button-group">
+        <button nbButton status="primary" type="submit" [disabled]="!signatureForm.valid || files.length === 0">
+          Subir Firma
+        </button>
+        <button nbButton status="basic" (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </nb-card-body>
+</nb-card>

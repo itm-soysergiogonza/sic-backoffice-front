@@ -1,0 +1,25 @@
+<nb-card>
+  <nb-card-header>
+    <h1>Crear Parámetros</h1>
+  </nb-card-header>
+  <nb-card-body>
+    <div class="form-row">
+      <div class="form-group">
+       <label for="certificateTypeId" class="form-label">Tipo de Certificado *</label>
+        <div class="select-container">
+          <nb-select
+            id="certificateTypeId"
+            formControlName="certificateTypeId"
+            [placeholder]="isLoadingCertificateTypes ? 'Cargando...' : 'Seleccione un tipo de certificado'"
+            [status]="isInvalid('certificateTypeId') ? 'danger' : 'basic'"
+            fullWidth
+          >
+            @for (type of certificateTypes; track type.id) {
+              <nb-option [value]="type.id">{{type.name}}</nb-option>
+            }
+          </nb-select>
+        </div>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>

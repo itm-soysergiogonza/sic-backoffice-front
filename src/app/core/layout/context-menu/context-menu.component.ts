@@ -22,17 +22,17 @@ type ThemeOption = 'default' | 'cosmic' | 'system';
 })
 export class ContextMenuClickComponent implements OnInit {
   items = [
-    { title: 'Profile', icon: 'person-outline' },
+    { title: 'Perfil', icon: 'person-outline', link: '/perfil' },
     {
-      title: 'Theme',
+      title: 'Tema',
       icon: 'color-palette-outline',
       children: [
-        { title: 'Light', icon: 'sun-outline' },
-        { title: 'Dark', icon: 'moon-outline' },
-        { title: 'System', icon: 'monitor-outline' },
+        { title: 'Claro ', icon: 'sun-outline' },
+        { title: 'Oscuro', icon: 'moon-outline' },
+        { title: 'Sistema', icon: 'monitor-outline' },
       ],
     },
-    { title: 'Logout', icon: 'log-out-outline' },
+    { title: 'Cerrar Sesión', icon: 'log-out-outline', link: '/logout' },
   ];
 
   public userName = '';
@@ -115,7 +115,7 @@ export class ContextMenuClickComponent implements OnInit {
       }
 
       if (item.title === 'Profile') {
-        // TODO: Implementar navegación al perfil
+        this._router.navigate(['/perfil']);
         return;
       }
 

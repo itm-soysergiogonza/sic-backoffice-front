@@ -1,0 +1,23 @@
+<nb-card>
+  <nb-card-body>
+    <nb-tabset>
+      <nb-tab tabTitle="Información de Usuario" tabIcon="person-outline" responsive>
+        <p>List of <strong>users</strong>.</p>
+      </nb-tab>
+      <nb-tab tabTitle="Firmas" tabIcon="minus-outline" responsive>
+        <div class="signature-header">
+          <h4>Mis Firmas</h4>
+          <button nbButton status="primary" size="small" (click)="openSignatureModal()">
+            <nb-icon icon="plus-outline" pack="eva"></nb-icon>
+            Subir Firma
+          </button>
+        </div>
+        
+        <div class="signature-list">
+          <!-- Aquí irá la lista de firmas -->
+          <p class="no-signatures">No hay firmas cargadas</p>
+        </div>
+      </nb-tab>
+    </nb-tabset>
+  </nb-card-body>
+</nb-card>

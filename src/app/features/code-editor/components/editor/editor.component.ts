@@ -1,8 +1,8 @@
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { ParameterService } from '@shared/services/parameter.service';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import {
   NbAccordionModule,
@@ -17,7 +17,6 @@ import {
 import { CodeModel } from '@ngstack/code-editor';
 import { CodeEditorModule, CodeEditorComponent } from '@ngstack/code-editor';
 import * as monaco from 'monaco-editor';
-import { Parameter } from '@shared/models/interfaces/parameter.interface';
 import { EditorService, Template } from '../../services/editor.service';
 import { VariablesService } from '@shared/services/variables.service';
 import { Variable } from '@shared/models/interfaces/variables.interface';
@@ -29,12 +28,12 @@ interface LanguageOption {
   label: string;
 }
 
-interface TemplateParameter {
-  name: string;
-  description: string;
-  example: string;
-  category: string;
-}
+// interface TemplateParameter {
+//   name: string;
+//   description: string;
+//   example: string;
+//   category: string;
+// }
 
 @Component({
   selector: 'app-editor',
@@ -64,20 +63,19 @@ export class EditorComponent implements OnInit {
   @ViewChild('editor') editor!: CodeEditorComponent;
 
   theme = 'vs-dark';
-  selectedLanguage: LanguageType = 'html';
-  htmlContent = '';
-  cssContent = '';
-  previewContent!: SafeHtml;
-  showVariables = false;
+  private _selectedLanguage: LanguageType = 'html';
+  private _htmlContent = '';
+
+  public previewContent!: SafeHtml;
+  public showVariables = false;
 
   languages: LanguageOption[] = [
     { value: 'html', label: 'HTML' },
-    { value: 'css', label: 'CSS' },
   ];
 
   model: CodeModel = {
     language: 'html',
-    uri: 'main.html',
+    uri: 'index.html',
     value: '',
   };
 
@@ -88,22 +86,20 @@ export class EditorComponent implements OnInit {
     },
     lineNumbers: 'on' as const,
     roundedSelection: false,
-    scrollBeyondLastLine: false,
+    scrollBeyondLastLine: true,
     readOnly: false,
     automaticLayout: true,
   };
 
   constructor(
-    private sanitizer: DomSanitizer,
-    private _parametersService: ParameterService,
+    private _sanitizer: DomSanitizer,
     private _editorService: EditorService,
     private _variablesService: VariablesService
   ) {
-    this.previewContent = this.sanitizer.bypassSecurityTrustHtml('');
+    this.previewContent = this._sanitizer.bypassSecurityTrustHtml('');
   }
 
   ngOnInit() {
-    console.log('Certificate Type ID:', this.certificateTypeId);
     if (this.templateId) {
       this.loadTemplate();
     } else {
@@ -129,12 +125,12 @@ export class EditorComponent implements OnInit {
    </body>
   </html>`;
 
-    this.htmlContent = baseTemplate;
+    this._htmlContent = baseTemplate;
     this.model = {
       ...this.model,
       value: baseTemplate
     };
-    this.updatePreview();
+    this._updatePreview();
     this.contentChange.emit(baseTemplate);
   }
 
@@ -142,12 +138,12 @@ export class EditorComponent implements OnInit {
     if (this.templateId) {
       this._editorService.getTemplateById(this.templateId).subscribe({
         next: (template: Template) => {
-          this.htmlContent = template.content;
+          this._htmlContent = template.content;
           this.model = {
             ...this.model,
             value: template.content
           };
-          this.updatePreview();
+          this._updatePreview();
           this.contentChange.emit(template.content);
         },
         error: (error) => {
@@ -178,34 +174,18 @@ export class EditorComponent implements OnInit {
     }
   }
 
-  onLanguageChange(language: LanguageType): void {
-    this.selectedLanguage = language;
-    this.model = {
-      ...this.model,
-      language,
-      uri: `main.${language}`,
-      value: language === 'html' ? this.htmlContent : this.cssContent,
-    };
-  }
-
   onCodeChanged(value: string): void {
-    if (this.selectedLanguage === 'html') {
-      this.htmlContent = value;
-    } else {
-      this.cssContent = value;
-    }
-    this.updatePreview();
-    this.contentChange.emit(this.htmlContent);
+    this._htmlContent = value;
+    this._updatePreview();
+    this.contentChange.emit(this._htmlContent);
   }
 
   toggleVariables(): void {
     this.showVariables = !this.showVariables;
-    console.log('Parameters visibility:', this.showVariables);
-    console.log('Current variable:', this.variables);
   }
 
   insertParameter(paramName: string): void {
-    if (this.selectedLanguage === 'html') {
+    if (this._selectedLanguage === 'html') {
       const editor = this.editor.editor;
       if (editor) {
         const position = editor.getPosition();
@@ -226,19 +206,25 @@ export class EditorComponent implements OnInit {
             }
           ]);
 
-          this.htmlContent = editor.getValue();
-          this.updatePreview();
-          this.contentChange.emit(this.htmlContent);
+          this._htmlContent = editor.getValue();
+          this._updatePreview();
+          this.contentChange.emit(this._htmlContent);
         }
       }
     }
   }
 
-  private updatePreview(): void {
-    const combinedContent = `
-      <style>${this.cssContent}</style>
-      ${this.htmlContent}
-    `;
-    this.previewContent = this.sanitizer.bypassSecurityTrustHtml(combinedContent);
+  private _updatePreview(): void {
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = this._htmlContent;
+    iframe.style.width = '100%';
+    iframe.style.height = '100dvh';
+    iframe.style.border = 'none';
+
+    const previewContainer = document.querySelector('.preview-content');
+    if (previewContainer) {
+      previewContainer.innerHTML = '';
+      previewContainer.appendChild(iframe);
+    }
   }
 }

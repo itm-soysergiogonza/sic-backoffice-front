@@ -54,9 +54,7 @@ export class ParameterModalComponent implements OnInit {
     private _notificationService: NotificationToastService,
     private _formHandlerService: FormHandlerService
   ) {
-    console.log('1. Constructor iniciado');
     this.parameterForm = this._formHandlerService.createParameterForm();
-    console.log('2. Formulario base creado');
   }
 
   ngOnInit(): void {

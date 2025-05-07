@@ -24,6 +24,8 @@ import {
   NbThemeModule,
   NbToastrModule,
   NbTreeGridModule,
+  NbTabComponent,
+  NbTabsetModule
 } from '@nebular/theme';
 import { provideCodeEditor } from '@ngstack/code-editor';
 import { routes } from './app.routes';
@@ -34,6 +36,7 @@ const NEBULAR_MODULES: (Provider | EnvironmentProviders)[] = [
   ...(NbMenuModule.forRoot().providers || []),
   ...(NbDialogModule.forRoot().providers || []),
   ...(NbToastrModule.forRoot().providers || []),
+
   importProvidersFrom(
     NbCardModule,
     NbBadgeModule,
@@ -41,6 +44,8 @@ const NEBULAR_MODULES: (Provider | EnvironmentProviders)[] = [
     NbEvaIconsModule,
     NbTreeGridModule,
     NbCardHeaderComponent,
+    NbTabComponent,
+    NbTabsetModule
   ),
 ];
 
