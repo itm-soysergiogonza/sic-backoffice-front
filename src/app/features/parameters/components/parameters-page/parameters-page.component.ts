@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   NbButtonModule,
@@ -16,6 +16,7 @@ import { NbTableComponent } from '../nb-table/nb-table.component';
 import { ParameterService } from '@shared/services/parameter.service';
 import {Subject } from 'rxjs';
 import { ParameterModalComponent } from '../parameter-modal/parameter-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-parameters-page',
@@ -40,10 +41,13 @@ export class ParametersPageComponent implements OnInit {
   certificateTypes: CertificateType[] = [];
   selectedCertificate: CertificateType | null = null;
   private _destroy$ = new Subject<void>();
-
-  constructor(private _certificatesService: CertificatesService,
-              private _parameterService: ParameterService,
-              private _dialogService: NbDialogService) {}
+  private readonly _router = inject(Router);
+  
+  constructor(
+    private _certificatesService: CertificatesService,
+    private _parameterService: ParameterService,
+    private _dialogService: NbDialogService
+  ) {}
 
   ngOnInit(): void {
     this._certificatesService.certificateType.subscribe(
@@ -70,20 +74,22 @@ export class ParametersPageComponent implements OnInit {
   }
 
   openParameterModal(): void {
-    this._dialogService.open(ParameterModalComponent, {
-      context: {
-        certificateTypes: this.certificateTypes,
-        isEditMode: false,
-        modalTitle: 'Crear Nuevo Parámetro',
-      },
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-    })
-      .onClose.subscribe((newParameter: CertificateField | null) => {
-        if (newParameter) {
-          this.nbTableComponent.parameters.push(newParameter);
-          this.nbTableComponent.updateDataSource(this.nbTableComponent.parameters);
-        }
-    })
+    this._router.navigate(['/parametros/crear']);
+
+    // this._dialogService.open(ParameterModalComponent, {
+    //   context: {
+    //     certificateTypes: this.certificateTypes,
+    //     isEditMode: false,
+    //     modalTitle: 'Crear Nuevo Parámetro',
+    //   },
+    //   closeOnBackdropClick: false,
+    //   closeOnEsc: false,
+    // })
+    //   .onClose.subscribe((newParameter: CertificateField | null) => {
+    //     if (newParameter) {
+    //       this.nbTableComponent.parameters.push(newParameter);
+    //       this.nbTableComponent.updateDataSource(this.nbTableComponent.parameters);
+    //     }
+    // })
   }
 }
