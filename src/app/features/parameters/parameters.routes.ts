@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { ParametersPageComponent } from '@features/parameters/components/parameters-page/parameters-page.component';
-import { CreateComponent } from './components/create/create.component';
+import { ParameterModalComponent } from './components/parameter-modal/parameter-modal.component';
 
 export const PARAMETERS_ROUTES: Routes = [
   {
@@ -9,6 +9,6 @@ export const PARAMETERS_ROUTES: Routes = [
   },
   {
     path: 'crear',
-    component: CreateComponent
-  }
+    component: ParameterModalComponent,
+  },
 ];

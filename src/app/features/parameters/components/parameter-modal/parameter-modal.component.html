@@ -6,6 +6,106 @@
     <form [formGroup]="parameterForm">
       <div class="form-row">
         <div class="form-group">
+          <label for="certificateTypeId">Tipo de Certificado *</label>
+          <nb-select
+            id="certificateTypeId"
+            formControlName="certificateTypeId"
+            [placeholder]="isLoadingCertificateTypes ? 'Cargando...' : 'Seleccione un tipo de certificado'"
+            [status]="isInvalid('certificateTypeId') ? 'danger' : 'basic'"
+            fullWidth
+          >
+            <nb-option *ngFor="let type of certificateTypes" [value]="type.id">
+              {{ type.name }}
+            </nb-option>
+          </nb-select>
+          <div *ngIf="isInvalid('certificateTypeId')" class="error-message">
+            El tipo de certificado es requerido
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="type">Tipo de Campo *</label>
+          <nb-select id="type" formControlName="type" fullWidth>
+            <nb-option *ngFor="let option of typeOptions" [value]="option.value">
+              {{ option.label }}
+            </nb-option>
+          </nb-select>
+          <div *ngIf="isInvalid('type')" class="error-message">
+            El tipo es requerido
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sourceType">Fuente *</label>
+          <nb-select id="sourceType" formControlName="sourceType" fullWidth>
+            <nb-option *ngFor="let opt of sourceOptions" [value]="opt.value">
+              {{ opt.label }}
+            </nb-option>
+          </nb-select>
+          <div *ngIf="isInvalid('sourceType')" class="error-message">
+            La fuente es requerida
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="parameterForm.get('sourceType')?.value === 'SQL'">
+        <div class="form-row " >
+          <div class="form-group">
+            <label for="dataSource">Data Source *</label>
+            <input id="dataSource" nbInput fullWidth formControlName="dataSource" placeholder="Ingrese el data source">
+            <div *ngIf="isInvalid('dataSource')" class="error-message">
+              El data source es requerido
+            </div>
+          </div>
+        </div>
+        <div class="form-row depends-content" >
+
+          <div class="form-group checkbox-label">
+            <label>Depends On</label>
+            <nb-toggle formControlName="dependsOn"></nb-toggle>
+          </div>
+          <div *ngIf="parameterForm.get('dependsOn')?.value" class="form-group">
+            <div class="dependency-row" *ngFor="let dep of dependenciesArray; let i = index">
+              <input nbInput
+                    [(ngModel)]="dependenciesArray[i]"
+                    [ngModelOptions]="{ standalone: true }"
+                    name="dependency{{i}}"
+                    placeholder="Dependencia">
+              <button nbButton ghost status="basic" size="tiny" (click)="addDependency()">+</button>
+              <button nbButton ghost status="basic" size="tiny" (click)="removeDependency(i)" [disabled]="dependenciesArray.length === 1">-</button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <div class="form-row">
+      
+        <div *ngIf="parameterForm.get('sourceType')?.value === 'URL'" class="form-group">
+          <label for="url">URL *</label>
+          <input id="url" nbInput fullWidth formControlName="url" placeholder="Ingrese la URL">
+          <div *ngIf="isInvalid('url')" class="error-message">
+            La URL es requerida
+          </div>
+        </div>
+        <div *ngIf="parameterForm.get('sourceType')?.value === 'ESTATICA'" class="form-group">
+          <div class="static-row" *ngFor="let opt of staticOptionsArray; let i = index">
+            <input nbInput
+                   [(ngModel)]="staticOptionsArray[i].key"
+                   [ngModelOptions]="{ standalone: true }"
+                   name="staticKey{{i}}"
+                   placeholder="Clave">
+            <input nbInput
+                   [(ngModel)]="staticOptionsArray[i].value"
+                   [ngModelOptions]="{ standalone: true }"
+                   name="staticValue{{i}}"
+                   placeholder="Valor">
+            <button nbButton ghost status="basic" size="tiny" (click)="addStaticOption()">+</button>
+            <button nbButton ghost status="basic" size="tiny" (click)="removeStaticOption(i)" [disabled]="staticOptionsArray.length === 1">-</button>
+          </div>
+        </div>
+        
+        
+      </div>
+      <div class="form-row">
+        <div class="form-group">
           <label for="name">Nombre *</label>
           <input id="name" nbInput fullWidth formControlName="name" placeholder="Ingrese el nombre del parámetro">
           @if (isInvalid('name')) {

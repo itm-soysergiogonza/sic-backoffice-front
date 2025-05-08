@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateParameterModalComponent } from './create-parameter-modal.component';
+import { ParameterModalComponent } from './parameter-modal.component';
 
-describe('CreateParameterModalComponent', () => {
-  let component: CreateParameterModalComponent;
-  let fixture: ComponentFixture<CreateParameterModalComponent>;
+describe('ParameterModalComponent', () => {
+  let component: ParameterModalComponent;
+  let fixture: ComponentFixture<ParameterModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateParameterModalComponent]
+      imports: [ParameterModalComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CreateParameterModalComponent);
+    fixture = TestBed.createComponent(ParameterModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
