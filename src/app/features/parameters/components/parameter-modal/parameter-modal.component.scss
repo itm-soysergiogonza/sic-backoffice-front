@@ -39,12 +39,33 @@ nb-card-body {
 
 .form-row {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  .form-group {
-    flex: 1;
-    margin-bottom: 0;
-  }
+  gap: 20px; /* Espacio entre inputs */
+  flex-wrap: wrap;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-row > .form-group {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+:host ::ng-deep nb-select {
+  width: 100% !important;
+  min-width: 0 !important;
+  flex: 1 1 0 !important;
+}
+
+:host ::ng-deep nb-select .select-button {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+
+.checkbox-wrapper {
+  margin-top: 0.5rem;
 }
 
 .checkbox-label {
@@ -81,8 +102,62 @@ nb-card-body {
   border-top: 1px solid nb-theme(divider-color);
 }
 
-.depends-content {
-  &>div {
-    align-items: flex-start;
+:host ::ng-deep {
+  nb-select {
+    width: 100%;
+  }
+
+  .form-control {
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+}
+
+:host ::ng-deep nb-select,
+:host ::ng-deep nb-select .select-button {
+  width: 100% !important;
+  min-width: 0 !important;
+  flex: 1 1 0 !important;
+}
+
+.loading-indicator {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  nb-icon {
+    font-size: 1.2rem;
+    animation: spin 1s linear infinite;
+  }
+}
+
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.parameter-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: nb-theme(background-basic-color-2);
+  border-radius: nb-theme(border-radius);
+
+  p {
+    margin: 0.5rem 0;
+    color: nb-theme(text-basic-color);
+
+    strong {
+      color: nb-theme(text-primary-color);
+    }
   }
 }

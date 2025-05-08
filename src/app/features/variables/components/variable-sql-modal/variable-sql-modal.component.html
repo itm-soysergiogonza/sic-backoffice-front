@@ -1,0 +1,28 @@
+<nb-card [ngClass]="tipoContenido === 'sql' ? 'sql-card' : 'full-width-card'" style="justify-content: center; margin: auto;">
+    <nb-card-header>
+      {{ tipoContenido === 'sql' ? 'Consulta SQL' : tipoContenido === 'parameters' ? 'Parámetros' : 'Variables' }}
+    </nb-card-header>
+    
+    <nb-card-body>
+      <div *ngIf="tipoContenido === 'variables'">
+        <ul>
+          <li *ngFor="let v of contenido">{{ v.nombre }}</li>
+        </ul>
+      </div>
+  
+      <div *ngIf="tipoContenido === 'parameters'">
+        <ul>
+          <li *ngFor="let v of contenido">{{ v.nombre }}</li>
+        </ul>
+      </div>
+  
+      <div *ngIf="tipoContenido === 'sql'">
+        <pre style="white-space: pre-wrap;">{{ sql }}</pre>
+      </div>
+    </nb-card-body>
+  
+    <nb-card-footer>
+      <button nbButton status="primary" (click)="close()">Cerrar</button>
+    </nb-card-footer>
+  </nb-card>
+  

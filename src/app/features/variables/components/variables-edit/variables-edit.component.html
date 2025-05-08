@@ -1,0 +1,51 @@
+<nb-card style="max-width: 800px; margin: auto;">
+    <nb-card-header>
+        <h3>Configuración de Variable</h3>
+    </nb-card-header>
+
+    <nb-card-body>
+        <form [formGroup]="variableForm">
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group">
+                    <label for="certificateTypeId">Tipo de Certificado</label>
+                    <nb-select fullWidth id="certificateTypeId" formControlName="certificateTypeId"
+                    [disabled]="false">
+                    <nb-option *ngFor="let type of certificateTypes" [value]="type.id">
+                      {{ type.name }}
+                    </nb-option>
+                  </nb-select>                
+
+
+                </div>
+
+                <div class="form-group">
+                    <label for="context">Contexto</label>
+                    <input nbInput fullWidth id="context" formControlName="context"
+                        placeholder="Ej. info, detail, header" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="sql">Consulta SQL</label>
+                <textarea nbInput fullWidth id="sql" formControlName="sql" placeholder="Ej. SELECT nombre AS nombre ..."
+                    style="height: 200px;"></textarea>
+            </div>
+
+            <div class="form-group"
+                style="margin-top: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                <label for="list">¿Es una lista?</label>
+                <nb-toggle formControlName="list" status="primary" class="small-toggle"></nb-toggle>
+            </div>
+
+            <div class="form-group mt-4">
+                <button nbButton status="primary" [disabled]="!variableForm.valid || isSubmitting"
+                    (click)="saveVariable()">
+                    Guardar
+                </button>
+                <button nbButton status="primary" (click)="returnVariable()">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </nb-card-body>
+</nb-card>

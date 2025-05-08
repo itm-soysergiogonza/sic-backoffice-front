@@ -39,6 +39,10 @@ export class VariablesService {
       .pipe(tap((variables) => this._variables.next(variables)));
   }
 
+  getVariableById(id: number): Observable<Variable> {
+    return this._http.get<Variable>(`${this._API_URL}/api/certificate/variable/${id}`);
+  }
+
   updateVariable(id: number, params: Partial<Variable>): Observable<Variable> {
     return this._http.put<Variable>(
       `${this._API_URL}/api/certificate/variable/${id}`,

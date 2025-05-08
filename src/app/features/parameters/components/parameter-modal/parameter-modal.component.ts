@@ -1,8 +1,8 @@
-import { Component, OnInit, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { NbButtonModule, NbCardModule, NbDialogRef, NbInputModule, NbSelectModule, NbToastrService, NbDialogService, NbIconModule, NbToggleModule, NbTooltipModule } from '@nebular/theme';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators, FormBuilder, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NbCardModule, NbSelectModule, NbInputModule, NbButtonModule, NbToggleModule, NbIconModule, NbTooltipModule } from '@nebular/theme';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormHandlerService } from '@shared/services/form-handler.service';
 import { FormUtils } from '@shared/utils/form-utils';
@@ -22,8 +22,7 @@ import { CertificateField, CertificateType } from '@shared/models/interfaces/cer
     NbInputModule,
     NbButtonModule,
     NbToggleModule,
-    NbIconModule,
-    NbTooltipModule,
+    NbIconModule,    
     FormsModule
   ],
   templateUrl: './parameter-modal.component.html',
