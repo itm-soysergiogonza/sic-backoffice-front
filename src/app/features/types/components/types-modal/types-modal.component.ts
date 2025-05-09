@@ -15,6 +15,7 @@ import {
   NbInputModule,
   NbOptionModule,
   NbSelectModule,
+  NbToggleModule,
 } from '@nebular/theme';
 import { CertificateType } from '@shared/models/interfaces/certificate.interface';
 import { CertificatesService } from '@shared/services/certificates.service';
@@ -32,6 +33,7 @@ import { NotificationToastService } from '@shared/services/notification-toast-se
     NbOptionModule,
     NbSelectModule,
     CommonModule,
+    NbToggleModule,
   ],
   templateUrl: './types-modal.component.html',
   styleUrl: './types-modal.component.scss',
@@ -43,6 +45,7 @@ export class TypesModalComponent {
   public modalTitle = 'Crear Nuevo Tipo Certificado';
   public typeToEdit: CertificateType | null = null;
   public isSubmitting = false;
+  public checked = false;
 
   private _destroyRef: DestroyRef = inject(DestroyRef);
 
@@ -60,7 +63,22 @@ export class TypesModalComponent {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.typeForm = this._formBuilder.group({
+      name: ['', [Validators.required]],
+      paid: [false, Validators.required],
+      price: [{ value: null, disabled: true }, [Validators.required, Validators.min(1)]],
+    });
+  
+    this.typeForm.get('paid')?.valueChanges.subscribe((isPaid: boolean) => {
+      if (isPaid) {
+        this.typeForm.get('price')?.enable();
+      } else {
+        this.typeForm.get('price')?.disable();
+        this.typeForm.get('price')?.setValue(0);
+      }
+    });
+  }
 
   initialize(type: CertificateType, isEdit: boolean = false): void {
     this.isEditMode = isEdit;

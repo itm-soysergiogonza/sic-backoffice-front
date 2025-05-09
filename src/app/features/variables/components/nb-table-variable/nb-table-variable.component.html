@@ -2,20 +2,12 @@
   <nb-card-header>
     <div class="header-content">
       <div class="select-container">
-        <nb-select
-          shape="semi-round"
-          size="large"
-          id="certificateTypeId"
-          (selectedChange)="onCertificateTypeChange($event)"
-          [formControl]="certificateType"
-          [placeholder]="
+        <nb-select shape="semi-round" size="large" id="certificateTypeId"
+          (selectedChange)="onCertificateTypeChange($event)" [formControl]="certificateType" [placeholder]="
             isLoadingCertificateTypes
               ? 'Cargando...'
               : 'Seleccione un tipo de certificado'
-          "
-          [status]="isInvalid() ? 'danger' : 'basic'"
-          fullWidth="true"
-        >
+          " [status]="isInvalid() ? 'danger' : 'basic'" fullWidth="true">
           @for (type of certificateTypes; track type.id) {
           <nb-option [value]="type.id">{{ type.name }}</nb-option>
           }
@@ -41,47 +33,60 @@
       </div>
     </div>
     } @else {
-    <input
-      nbInput
-      [nbFilterInput]="dataSource"
-      id="search"
-      class="search-input"
-      placeholder="Buscar por contexto o parte del query"
-    />
+    <input nbInput [nbFilterInput]="dataSource" id="search" class="search-input"
+      placeholder="Buscar por contexto o parte del query" />
 
-    <table
-      [nbTreeGrid]="dataSource"
-      [nbSort]="dataSource"
-      (sort)="updateSort($event)"
-    >
+    <table [nbTreeGrid]="dataSource" [nbSort]="dataSource" (sort)="updateSort($event)">
       <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
       <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
 
       <ng-container [nbTreeGridColumnDef]="customColumn">
-        <th
-          nbTreeGridHeaderCell
-          [nbSortHeader]="getSortDirection(customColumn)"
-          *nbTreeGridHeaderCellDef
-        >
+        <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(customColumn)" *nbTreeGridHeaderCellDef>
           Contexto
         </th>
         <td nbTreeGridCell *nbTreeGridCellDef="let row">
           {{ row.data.context || "-" }}
         </td>
       </ng-container>
+      
+
+      <ng-container [nbTreeGridColumnDef]="'variables'">
+        <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
+          Variables
+        </th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          <button nbButton ghost status="primary" (click)="openVariableModal(row.data)" size="small">
+            <nb-icon icon="search-outline" pack="eva"></nb-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      
+      <ng-container [nbTreeGridColumnDef]="'parametros'">
+        <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
+          Parametros
+        </th>
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+          <button nbButton ghost status="primary" (click)="openParametroModal(row.data)" size="small">
+            <nb-icon icon="search-outline" pack="eva"></nb-icon>
+          </button>
+        </td>
+      </ng-container>
+      
+      
 
       <ng-container [nbTreeGridColumnDef]="'sql'">
-        <th
-          nbTreeGridHeaderCell
-          [nbSortHeader]="getSortDirection('sql')"
-          *nbTreeGridHeaderCellDef
-        >
+        <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('sql')" *nbTreeGridHeaderCellDef>
           SQL Query
         </th>
         <td nbTreeGridCell *nbTreeGridCellDef="let row">
-          {{ row.data.sql || "-" }}
+          <button nbButton ghost status="info" (click)="openSqlModal(row.data.sql)" size="small">
+            <nb-icon icon="search-outline" pack="eva"></nb-icon>
+          </button>
         </td>
       </ng-container>
+
+
 
       <!--    <ng-container [nbTreeGridColumnDef]="'type'">-->
       <!--      <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection('type')" *nbTreeGridHeaderCellDef>-->
@@ -107,20 +112,10 @@
       <ng-container [nbTreeGridColumnDef]="'actions'">
         <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>Acciones</th>
         <td nbTreeGridCell *nbTreeGridCellDef="let row">
-          <button
-            nbButton
-            ghost
-            status="primary"
-            (click)="editVariable(row.data)"
-          >
+          <button nbButton ghost status="primary" (click)="editVariable(row.data)">
             <nb-icon icon="edit-outline"></nb-icon>
           </button>
-          <button
-            nbButton
-            ghost
-            status="danger"
-            (click)="deleteVariable(row.data)"
-          >
+          <button nbButton ghost status="danger" (click)="deleteVariable(row.data)">
             <nb-icon icon="trash-outline"></nb-icon>
           </button>
         </td>

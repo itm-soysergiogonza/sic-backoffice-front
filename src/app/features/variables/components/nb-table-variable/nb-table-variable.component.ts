@@ -23,9 +23,12 @@ import { CertificatesService } from '@shared/services/certificates.service';
 import { Variable } from '@shared/models/interfaces/variables.interface';
 import { VariablesService } from '@shared/services/variables.service';
 import { catchError, EMPTY } from 'rxjs';
-import { VariableModalComponent } from '../variable-modal/variable-modal.component';
 import { NotificationToastService } from '@shared/services/notification-toast-service.service';
 import { CertificateType } from '@shared/models/interfaces/certificate.interface';
+import { VariableSqlModalComponent } from '@features/variables/components/variable-sql-modal/variable-sql-modal.component';
+import { Router } from '@angular/router';
+
+
 
 interface TreeNode<T> {
   data: T;
@@ -51,7 +54,7 @@ interface TreeNode<T> {
 })
 export class NbTableVariableComponent implements OnInit {
   customColumn = 'context';
-  defaultColumns = ['sql', 'actions'];
+  defaultColumns = ['variables', 'parametros', 'sql', 'actions'];
   allColumns = [this.customColumn, ...this.defaultColumns];
 
   dataSource: NbTreeGridDataSource<Variable>;
@@ -71,7 +74,8 @@ export class NbTableVariableComponent implements OnInit {
     private _variableService: VariablesService,
     private _dialogService: NbDialogService,
     private _certificatesService: CertificatesService,
-    private _notificationService: NotificationToastService
+    private _notificationService: NotificationToastService,
+    private router: Router,
   ) {
     this.dataSource = this._dataSourceBuilder.create([]);
   }
@@ -134,6 +138,60 @@ export class NbTableVariableComponent implements OnInit {
     this.dataSource.setData(treeData);
   }
 
+  openSqlModal(sql: string): void {
+    const dialogRef = this._dialogService.open(VariableSqlModalComponent, {
+      closeOnBackdropClick: true,
+      closeOnEsc: true,
+      hasBackdrop: true,
+    });
+
+    setTimeout(() => {
+      const modalComponent = dialogRef.componentRef?.instance;
+      if (modalComponent) {
+        modalComponent.sql = sql;
+      }
+    });
+  }
+
+  openVariableModal(variable: Variable): void {
+    const dialogRef = this._dialogService.open(VariableSqlModalComponent, {
+      closeOnBackdropClick: true,
+      closeOnEsc: true,
+      hasBackdrop: true,
+    });
+  
+    setTimeout(() => {
+      const modalComponent = dialogRef.componentRef?.instance;
+      if (modalComponent) {
+        // Convertimos la lista de strings en una lista de objetos con la propiedad nombre
+        const listaVariables = Array.isArray(variable.variables)
+          ? variable.variables.map(v => ({ nombre: v })) // Aquí cada elemento será un objeto { nombre: "valor" }
+          : [];
+    
+        modalComponent.initialize(listaVariables, 'variables');
+      }
+    });
+  } 
+
+  openParametroModal(variable: Variable): void {
+    const dialogRef = this._dialogService.open(VariableSqlModalComponent, {
+      closeOnBackdropClick: true,
+      closeOnEsc: true,
+      hasBackdrop: true,
+    });
+  
+    setTimeout(() => {
+      const modalComponent = dialogRef.componentRef?.instance;
+      if (modalComponent) {        
+        const listaParametros = Array.isArray(variable.parameters)
+          ? variable.parameters.map(v => ({ nombre: v })) 
+          : [];
+    
+        modalComponent.initialize(listaParametros, 'parameters');
+      }
+    });    
+  } 
+
   updateSort(sortRequest: NbSortRequest): void {
     this.sortColumn = sortRequest.column;
     this.sortDirection = sortRequest.direction;
@@ -188,42 +246,14 @@ export class NbTableVariableComponent implements OnInit {
       console.warn('No se recibió variable para editar');
       return;
     }
-
+  
     if (!variable.id) {
       console.warn('La variable no tiene ID:', variable);
       return;
     }
-
-    const dialogRef = this._dialogService.open(VariableModalComponent, {
-      closeOnBackdropClick: false,
-      closeOnEsc: true,
-      hasBackdrop: true,
-      hasScroll: false,
-    });
-
-    setTimeout(() => {
-      const modalComponent = dialogRef.componentRef?.instance;
-      if (modalComponent) {
-        modalComponent.initialize(variable, true);
-      }
-    });
-
-    dialogRef.onClose
-      .pipe(
-        takeUntilDestroyed(this._destroyRef),
-        catchError((error) => {
-          console.error('Error al abrir el modal de edición:', error);
-          return EMPTY;
-        })
-      )
-      .subscribe((result) => {
-        if (result) {
-          this.loadVariable(
-            this.certificateType.value ? this.certificateType.value : 0
-          );
-        }
-      });
-  }
+  
+    // Redirigir a la página de edición
+    this.router.navigate(['/variables/edit'], { queryParams: { id: variable.id } });  }
 
   refreshTable(): void {
     this.loadVariable(

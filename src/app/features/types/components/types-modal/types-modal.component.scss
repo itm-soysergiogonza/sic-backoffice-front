@@ -1,0 +1,11 @@
+::ng-deep .form-group-toggle {
+    display: flex;
+    align-items: center; /* centra verticalmente */
+    gap: 10px; /* espacio entre el label y el toggle */
+  }
+  
+  ::ng-deep .small-toggle {
+    transform: scale(0.7); /* hacerlo más pequeño */
+    transform-origin: left center; /* origen a la izquierda */    
+  }
+  
